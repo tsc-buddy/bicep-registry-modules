@@ -16,6 +16,9 @@ param location string = resourceGroup().location
 @description('Required. Kind of resource.')
 param kind string = 'ASEv3'
 
+@description('Required. ResourceId for the subnet.')
+param subnetResourceId string
+
 @description('Optional. Custom settings for changing the behavior of the App Service Environment.')
 param clusterSettings array = [
   {
@@ -33,11 +36,14 @@ param customDnsSuffixCertificateUrl string = ''
 @description('Conditional. The user-assigned identity to use for resolving the key vault certificate reference. If not specified, the system-assigned ASE identity will be used if available. Required if customDnsSuffix is not empty.')
 param customDnsSuffixKeyVaultReferenceIdentity string = ''
 
-@description('Optional. The Dedicated Host Count. By default zoneRedundant is true, this this value must be "-1". If you want zonal physical hardware isolation enabled, set to 2, if not, use 0.')
-param dedicatedHostCount int = -1
-
 @description('Optional. DNS suffix of the App Service Environment.')
 param dnsSuffix string = ''
+
+@description('Optional. The Dedicated Host Count. By default zoneRedundant is true, this this value must be "-1". If you want zonal physical hardware isolation enabled, set to 2, if not, use 0.')
+param dedicatedHostCount int = 0
+
+@description('Optional. Switch to make the App Service Environment zone redundant. If enabled, the minimum App Service plan instance count will be three, otherwise 1. If enabled, the `dedicatedHostCount` must be set to `-1`.')
+param zoneRedundant bool = false
 
 @description('Optional. Scale factor for frontends.')
 param frontEndScaleFactor int = 15
@@ -51,17 +57,11 @@ param frontEndScaleFactor int = 15
 ])
 param internalLoadBalancingMode string = 'None'
 
-@description('Optional. Property to enable and disable new private endpoint connection creation on ASE. .')
-param allowNewPrivateEndpointConnections bool = false
-
-@description('Optional. Property to enable and disable FTP on ASEV3.')
-param ftpEnabled bool = false
-
 @description('Optional. Customer provided Inbound IP Address. Only able to be set on Ase create.')
 param inboundIpAddressOverride string = ''
 
-@description('Optional. Property to enable and disable Remote Debug on ASEv3.')
-param remoteDebugEnabled bool = false
+@description('Optional. Property to enable and disable new private endpoint connection creation on ASE. .')
+param allowNewPrivateEndpointConnections bool = false
 
 @description('Optional. Specify preference for when and how the planned maintenance is applied.')
 @allowed([
@@ -72,11 +72,11 @@ param remoteDebugEnabled bool = false
 ])
 param upgradePreference string = 'None'
 
-@description('Required. ResourceId for the subnet.')
-param subnetResourceId string
+@description('Optional. Property to enable and disable FTP on ASEV3.')
+param ftpEnabled bool = false
 
-@description('Optional. Switch to make the App Service Environment zone redundant. If enabled, the minimum App Service plan instance count will be three, otherwise 1. If enabled, the `dedicatedHostCount` must be set to `-1`.')
-param zoneRedundant bool = true
+@description('Optional. Property to enable and disable Remote Debug on ASEv3.')
+param remoteDebugEnabled bool = false
 
 @description('Optional. The managed identity definition for this resource.')
 param managedIdentities managedIdentitiesType
@@ -110,8 +110,6 @@ var builtInRoleNames = {
   'Role Based Access Control Administrator (Preview)': subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f58310d9-a9f6-439a-9e8d-f62e7b41a168')
   'User Access Administrator': subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '18d7d88d-d35e-4fb5-a5c3-7773c20a72d9')
 }
-
-var enableReferencedModulesTelemetry = false
 
 // ============== //
 // Resources      //
@@ -156,7 +154,7 @@ resource appServiceEnvironment 'Microsoft.Web/hostingEnvironments@2023-01-01' = 
   }
 }
 
-module appServiceEnvironment_configurations_networking 'configuration-networking/main.bicep' = if (kind == 'ASEv3') {
+module appServiceEnvironment_configurations_networking 'configuration-networking/main.bicep' = {
   name: '${uniqueString(deployment().name, location)}-AppServiceEnv-Configurations-Networking'
   params: {
     hostingEnvironmentName: appServiceEnvironment.name
@@ -164,18 +162,16 @@ module appServiceEnvironment_configurations_networking 'configuration-networking
     ftpEnabled: ftpEnabled
     inboundIpAddressOverride: inboundIpAddressOverride
     remoteDebugEnabled: remoteDebugEnabled
-    enableDefaultTelemetry: enableReferencedModulesTelemetry
   }
 }
 
-module appServiceEnvironment_configurations_customDnsSuffix 'configuration-customdnssuffix/main.bicep' = if (kind == 'ASEv3' && !empty(customDnsSuffix)) {
+module appServiceEnvironment_configurations_customDnsSuffix 'configuration-customdnssuffix/main.bicep' = if (!empty(customDnsSuffix)) {
   name: '${uniqueString(deployment().name, location)}-AppServiceEnv-Configurations-CustomDnsSuffix'
   params: {
     hostingEnvironmentName: appServiceEnvironment.name
     certificateUrl: customDnsSuffixCertificateUrl
     keyVaultReferenceIdentity: customDnsSuffixKeyVaultReferenceIdentity
     dnsSuffix: customDnsSuffix
-    enableDefaultTelemetry: enableReferencedModulesTelemetry
   }
 }
 
@@ -245,7 +241,7 @@ type managedIdentitiesType = {
   @description('Optional. Enables system assigned managed identity on the resource.')
   systemAssigned: bool?
 
-  @description('Optional. The resource ID(s) to assign to the resource.')
+  @description('Optional. The resource ID(s) to assign to the resource. Required if a user assigned identity is used for encryption.')
   userAssignedResourceIds: string[]?
 }?
 
@@ -291,11 +287,6 @@ type diagnosticSettingType = {
 
     @description('Optional. Name of a Diagnostic Log category group for a resource type this setting is applied to. Set to \'AllLogs\' to collect all logs.')
     categoryGroup: string?
-  }[]?
-
-  metricCategories: {
-    @description('Required. Name of a Diagnostic Metric category for a resource type this setting is applied to. Set to `AllMetrics` to collect all metrics.')
-    category: string
   }[]?
 
   @description('Optional. A string indicating whether the export to Log Analytics should use the default destination type, i.e. AzureDiagnostics, or use a destination type.')
