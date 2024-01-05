@@ -13,7 +13,7 @@ param location string = resourceGroup().location
 @allowed([
   'ASEv3'
 ])
-@description('Required. Kind of resource.')
+@description('Optional. Kind of resource.')
 param kind string = 'ASEv3'
 
 @description('Required. ResourceId for the subnet.')
@@ -78,9 +78,6 @@ param ftpEnabled bool = false
 @description('Optional. Property to enable and disable Remote Debug on ASEv3.')
 param remoteDebugEnabled bool = false
 
-@description('Optional. The managed identity definition for this resource.')
-param managedIdentities managedIdentitiesType
-
 @description('Optional. Enable/Disable usage telemetry for module.')
 param enableTelemetry bool = true
 
@@ -95,13 +92,6 @@ param tags object?
 
 @description('Optional. The diagnostic settings of the service.')
 param diagnosticSettings diagnosticSettingType
-
-var formattedUserAssignedIdentities = reduce(map((managedIdentities.?userAssignedResourceIds ?? []), (id) => { '${id}': {} }), {}, (cur, next) => union(cur, next)) // Converts the flat array to an object like { '${id1}': {}, '${id2}': {} }
-
-var identity = !empty(managedIdentities) ? {
-  type: (managedIdentities.?systemAssigned ?? false) ? (!empty(managedIdentities.?userAssignedResourceIds ?? {}) ? 'SystemAssigned,UserAssigned' : 'SystemAssigned') : (!empty(managedIdentities.?userAssignedResourceIds ?? {}) ? 'UserAssigned' : null)
-  userAssignedIdentities: !empty(formattedUserAssignedIdentities) ? formattedUserAssignedIdentities : null
-} : any(null)
 
 var builtInRoleNames = {
   Contributor: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
@@ -138,7 +128,6 @@ resource appServiceEnvironment 'Microsoft.Web/hostingEnvironments@2023-01-01' = 
   kind: kind
   location: location
   tags: tags
-  identity: identity
   properties: {
     clusterSettings: clusterSettings
     dedicatedHostCount: dedicatedHostCount != 0 ? dedicatedHostCount : null
@@ -236,14 +225,6 @@ output location string = appServiceEnvironment.location
 // ================ //
 // Definitions      //
 // ================ //
-
-type managedIdentitiesType = {
-  @description('Optional. Enables system assigned managed identity on the resource.')
-  systemAssigned: bool?
-
-  @description('Optional. The resource ID(s) to assign to the resource. Required if a user assigned identity is used for encryption.')
-  userAssignedResourceIds: string[]?
-}?
 
 type lockType = {
   @description('Optional. Specify the name of lock.')
