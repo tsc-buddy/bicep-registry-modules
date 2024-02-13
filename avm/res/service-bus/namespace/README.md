@@ -9,6 +9,7 @@ This module deploys a Service Bus Namespace.
 - [Parameters](#Parameters)
 - [Outputs](#Outputs)
 - [Cross-referenced modules](#Cross-referenced-modules)
+- [Data Collection](#Data-Collection)
 
 ## Resource Types
 
@@ -55,7 +56,7 @@ This instance deploys the module with the minimum set of required parameters.
 
 ```bicep
 module namespace 'br/public:avm/res/service-bus/namespace:<version>' = {
-  name: '${uniqueString(deployment().name, location)}-test-sbnmin'
+  name: '${uniqueString(deployment().name, resourceLocation)}-test-sbnmin'
   params: {
     // Required parameters
     name: 'sbnmin001'
@@ -111,7 +112,7 @@ This instance deploys the module with features enabled for CMK encryption.
 
 ```bicep
 module namespace 'br/public:avm/res/service-bus/namespace:<version>' = {
-  name: '${uniqueString(deployment().name, location)}-test-sbnencr'
+  name: '${uniqueString(deployment().name, resourceLocation)}-test-sbnencr'
   params: {
     // Required parameters
     name: 'sbnencr001'
@@ -195,7 +196,7 @@ This instance deploys the module with most of its features enabled.
 
 ```bicep
 module namespace 'br/public:avm/res/service-bus/namespace:<version>' = {
-  name: '${uniqueString(deployment().name, location)}-test-sbnmax'
+  name: '${uniqueString(deployment().name, resourceLocation)}-test-sbnmax'
   params: {
     // Required parameters
     name: 'sbnmax001'
@@ -643,7 +644,7 @@ This instance deploys the module with features enabled for private endpoint conf
 
 ```bicep
 module namespace 'br/public:avm/res/service-bus/namespace:<version>' = {
-  name: '${uniqueString(deployment().name, location)}-test-sbnpe'
+  name: '${uniqueString(deployment().name, resourceLocation)}-test-sbnpe'
   params: {
     // Required parameters
     name: 'sbnpe001'
@@ -781,7 +782,7 @@ This instance deploys the module in alignment with the best-practices of the Wel
 
 ```bicep
 module namespace 'br/public:avm/res/service-bus/namespace:<version>' = {
-  name: '${uniqueString(deployment().name, location)}-test-sbnwaf'
+  name: '${uniqueString(deployment().name, resourceLocation)}-test-sbnwaf'
   params: {
     // Required parameters
     name: 'sbnwaf001'
@@ -1134,7 +1135,7 @@ module namespace 'br/public:avm/res/service-bus/namespace:<version>' = {
 | [`diagnosticSettings`](#parameter-diagnosticsettings) | array | The diagnostic settings of the service. |
 | [`disableLocalAuth`](#parameter-disablelocalauth) | bool | This property disables SAS authentication for the Service Bus namespace. |
 | [`disasterRecoveryConfig`](#parameter-disasterrecoveryconfig) | object | The disaster recovery configuration. |
-| [`enableTelemetry`](#parameter-enabletelemetry) | bool | Enable telemetry via a Globally Unique Identifier (GUID). |
+| [`enableTelemetry`](#parameter-enabletelemetry) | bool | Enable/Disable usage telemetry for module. |
 | [`location`](#parameter-location) | string | Location for all resources. |
 | [`lock`](#parameter-lock) | object | The lock settings of the service. |
 | [`managedIdentities`](#parameter-managedidentities) | object | The managed identity definition for this resource. |
@@ -1325,7 +1326,7 @@ The diagnostic settings of the service.
 | [`logAnalyticsDestinationType`](#parameter-diagnosticsettingsloganalyticsdestinationtype) | string | A string indicating whether the export to Log Analytics should use the default destination type, i.e. AzureDiagnostics, or use a destination type. |
 | [`logCategoriesAndGroups`](#parameter-diagnosticsettingslogcategoriesandgroups) | array | The name of logs that will be streamed. "allLogs" includes all possible logs for the resource. Set to '' to disable log collection. |
 | [`marketplacePartnerResourceId`](#parameter-diagnosticsettingsmarketplacepartnerresourceid) | string | The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic Logs. |
-| [`metricCategories`](#parameter-diagnosticsettingsmetriccategories) | array | The name of logs that will be streamed. "allLogs" includes all possible logs for the resource. Set to '' to disable log collection. |
+| [`metricCategories`](#parameter-diagnosticsettingsmetriccategories) | array | The name of metrics that will be streamed. "allMetrics" includes all possible metrics for the resource. Set to '' to disable metric collection. |
 | [`name`](#parameter-diagnosticsettingsname) | string | The name of diagnostic setting. |
 | [`storageAccountResourceId`](#parameter-diagnosticsettingsstorageaccountresourceid) | string | Resource ID of the diagnostic storage account. For security reasons, it is recommended to set diagnostic settings to send data to either storage account, log analytics workspace or event hub. |
 | [`workspaceResourceId`](#parameter-diagnosticsettingsworkspaceresourceid) | string | Resource ID of the diagnostic log analytics workspace. For security reasons, it is recommended to set diagnostic settings to send data to either storage account, log analytics workspace or event hub. |
@@ -1365,6 +1366,27 @@ The name of logs that will be streamed. "allLogs" includes all possible logs for
 - Required: No
 - Type: array
 
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`category`](#parameter-diagnosticsettingslogcategoriesandgroupscategory) | string | Name of a Diagnostic Log category for a resource type this setting is applied to. Set the specific logs to collect here. |
+| [`categoryGroup`](#parameter-diagnosticsettingslogcategoriesandgroupscategorygroup) | string | Name of a Diagnostic Log category group for a resource type this setting is applied to. Set to 'AllLogs' to collect all logs. |
+
+### Parameter: `diagnosticSettings.logCategoriesAndGroups.category`
+
+Name of a Diagnostic Log category for a resource type this setting is applied to. Set the specific logs to collect here.
+
+- Required: No
+- Type: string
+
+### Parameter: `diagnosticSettings.logCategoriesAndGroups.categoryGroup`
+
+Name of a Diagnostic Log category group for a resource type this setting is applied to. Set to 'AllLogs' to collect all logs.
+
+- Required: No
+- Type: string
+
 ### Parameter: `diagnosticSettings.marketplacePartnerResourceId`
 
 The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic Logs.
@@ -1374,10 +1396,23 @@ The full ARM resource ID of the Marketplace resource to which you would like to 
 
 ### Parameter: `diagnosticSettings.metricCategories`
 
-The name of logs that will be streamed. "allLogs" includes all possible logs for the resource. Set to '' to disable log collection.
+The name of metrics that will be streamed. "allMetrics" includes all possible metrics for the resource. Set to '' to disable metric collection.
 
 - Required: No
 - Type: array
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`category`](#parameter-diagnosticsettingsmetriccategoriescategory) | string | Name of a Diagnostic Metric category for a resource type this setting is applied to. Set to 'AllMetrics' to collect all metrics. |
+
+### Parameter: `diagnosticSettings.metricCategories.category`
+
+Name of a Diagnostic Metric category for a resource type this setting is applied to. Set to 'AllMetrics' to collect all metrics.
+
+- Required: Yes
+- Type: string
 
 ### Parameter: `diagnosticSettings.name`
 
@@ -1446,7 +1481,7 @@ Resource ID of the Primary/Secondary event hub namespace name, which is part of 
 
 ### Parameter: `enableTelemetry`
 
-Enable telemetry via a Globally Unique Identifier (GUID).
+Enable/Disable usage telemetry for module.
 
 - Required: No
 - Type: bool
@@ -1606,6 +1641,34 @@ List of IpRules. It will not be set if publicNetworkAccess is "Disabled". Otherw
 - Required: No
 - Type: array
 
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`action`](#parameter-networkrulesetsiprulesaction) | string | The IP filter action. |
+| [`ipMask`](#parameter-networkrulesetsiprulesipmask) | string | The IP mask. |
+
+### Parameter: `networkRuleSets.ipRules.action`
+
+The IP filter action.
+
+- Required: Yes
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Allow'
+    'Deny'
+  ]
+  ```
+
+### Parameter: `networkRuleSets.ipRules.ipMask`
+
+The IP mask.
+
+- Required: Yes
+- Type: string
+
 ### Parameter: `networkRuleSets.publicNetworkAccess`
 
 This determines if traffic is allowed over public network. Default is "Enabled". If set to "Disabled", traffic to this namespace will be restricted over Private Endpoints only and network rules will not be applied.
@@ -1633,6 +1696,27 @@ List virtual network rules. It will not be set if publicNetworkAccess is "Disabl
 
 - Required: No
 - Type: array
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`ignoreMissingVnetServiceEndpoint`](#parameter-networkrulesetsvirtualnetworkrulesignoremissingvnetserviceendpoint) | bool | The virtual network rule name. |
+| [`subnetResourceId`](#parameter-networkrulesetsvirtualnetworkrulessubnetresourceid) | string | The ID of the subnet. |
+
+### Parameter: `networkRuleSets.virtualNetworkRules.ignoreMissingVnetServiceEndpoint`
+
+The virtual network rule name.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `networkRuleSets.virtualNetworkRules.subnetResourceId`
+
+The ID of the subnet.
+
+- Required: Yes
+- Type: string
 
 ### Parameter: `premiumMessagingPartitions`
 
@@ -1670,7 +1754,7 @@ Configuration details for private endpoints. For security reasons, it is recomme
 | [`name`](#parameter-privateendpointsname) | string | The name of the private endpoint. |
 | [`privateDnsZoneGroupName`](#parameter-privateendpointsprivatednszonegroupname) | string | The name of the private DNS zone group to create if privateDnsZoneResourceIds were provided. |
 | [`privateDnsZoneResourceIds`](#parameter-privateendpointsprivatednszoneresourceids) | array | The private DNS zone groups to associate the private endpoint with. A DNS zone group can support up to 5 DNS zones. |
-| [`roleAssignments`](#parameter-privateendpointsroleassignments) | array | Array of role assignment objects that contain the 'roleDefinitionIdOrName' and 'principalId' to define RBAC role assignments on this resource. In the roleDefinitionIdOrName attribute, you can provide either the display name of the role definition, or its fully qualified ID in the following format: '/providers/Microsoft.Authorization/roleDefinitions/c2f4ef07-c644-48eb-af81-4b1b4947fb11'. |
+| [`roleAssignments`](#parameter-privateendpointsroleassignments) | array | Array of role assignments to create. |
 | [`service`](#parameter-privateendpointsservice) | string | The service (sub-) type to deploy the private endpoint for. For example "vault" or "blob". |
 | [`tags`](#parameter-privateendpointstags) | object | Tags to be applied on all resources/resource groups in this deployment. |
 
@@ -1695,6 +1779,27 @@ Custom DNS configurations.
 - Required: No
 - Type: array
 
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`fqdn`](#parameter-privateendpointscustomdnsconfigsfqdn) | string | Fqdn that resolves to private endpoint IP address. |
+| [`ipAddresses`](#parameter-privateendpointscustomdnsconfigsipaddresses) | array | A list of private IP addresses of the private endpoint. |
+
+### Parameter: `privateEndpoints.customDnsConfigs.fqdn`
+
+Fqdn that resolves to private endpoint IP address.
+
+- Required: No
+- Type: string
+
+### Parameter: `privateEndpoints.customDnsConfigs.ipAddresses`
+
+A list of private IP addresses of the private endpoint.
+
+- Required: Yes
+- Type: array
+
 ### Parameter: `privateEndpoints.customNetworkInterfaceName`
 
 The custom name of the network interface attached to the private endpoint.
@@ -1715,6 +1820,56 @@ A list of IP configurations of the private endpoint. This will be used to map to
 
 - Required: No
 - Type: array
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`name`](#parameter-privateendpointsipconfigurationsname) | string | The name of the resource that is unique within a resource group. |
+| [`properties`](#parameter-privateendpointsipconfigurationsproperties) | object | Properties of private endpoint IP configurations. |
+
+### Parameter: `privateEndpoints.ipConfigurations.name`
+
+The name of the resource that is unique within a resource group.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `privateEndpoints.ipConfigurations.properties`
+
+Properties of private endpoint IP configurations.
+
+- Required: Yes
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`groupId`](#parameter-privateendpointsipconfigurationspropertiesgroupid) | string | The ID of a group obtained from the remote resource that this private endpoint should connect to. |
+| [`memberName`](#parameter-privateendpointsipconfigurationspropertiesmembername) | string | The member name of a group obtained from the remote resource that this private endpoint should connect to. |
+| [`privateIPAddress`](#parameter-privateendpointsipconfigurationspropertiesprivateipaddress) | string | A private IP address obtained from the private endpoint's subnet. |
+
+### Parameter: `privateEndpoints.ipConfigurations.properties.groupId`
+
+The ID of a group obtained from the remote resource that this private endpoint should connect to.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `privateEndpoints.ipConfigurations.properties.memberName`
+
+The member name of a group obtained from the remote resource that this private endpoint should connect to.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `privateEndpoints.ipConfigurations.properties.privateIPAddress`
+
+A private IP address obtained from the private endpoint's subnet.
+
+- Required: Yes
+- Type: string
 
 ### Parameter: `privateEndpoints.location`
 
@@ -1789,7 +1944,7 @@ The private DNS zone groups to associate the private endpoint with. A DNS zone g
 
 ### Parameter: `privateEndpoints.roleAssignments`
 
-Array of role assignment objects that contain the 'roleDefinitionIdOrName' and 'principalId' to define RBAC role assignments on this resource. In the roleDefinitionIdOrName attribute, you can provide either the display name of the role definition, or its fully qualified ID in the following format: '/providers/Microsoft.Authorization/roleDefinitions/c2f4ef07-c644-48eb-af81-4b1b4947fb11'.
+Array of role assignments to create.
 
 - Required: No
 - Type: array
@@ -2644,6 +2799,184 @@ The subscriptions of the topic.
 - Required: No
 - Type: array
 
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`name`](#parameter-topicssubscriptionsname) | string | The name of the service bus namespace topic subscription. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`autoDeleteOnIdle`](#parameter-topicssubscriptionsautodeleteonidle) | string | ISO 8601 timespan idle interval after which the syubscription is automatically deleted. The minimum duration is 5 minutes. |
+| [`clientAffineProperties`](#parameter-topicssubscriptionsclientaffineproperties) | object | The properties that are associated with a subscription that is client-affine. |
+| [`deadLetteringOnFilterEvaluationExceptions`](#parameter-topicssubscriptionsdeadletteringonfilterevaluationexceptions) | bool | A value that indicates whether a subscription has dead letter support when a message expires. |
+| [`deadLetteringOnMessageExpiration`](#parameter-topicssubscriptionsdeadletteringonmessageexpiration) | bool | A value that indicates whether a subscription has dead letter support when a message expires. |
+| [`defaultMessageTimeToLive`](#parameter-topicssubscriptionsdefaultmessagetimetolive) | string | ISO 8601 timespan idle interval after which the message expires. The minimum duration is 5 minutes. |
+| [`duplicateDetectionHistoryTimeWindow`](#parameter-topicssubscriptionsduplicatedetectionhistorytimewindow) | string | ISO 8601 timespan that defines the duration of the duplicate detection history. The default value is 10 minutes. |
+| [`enableBatchedOperations`](#parameter-topicssubscriptionsenablebatchedoperations) | bool | A value that indicates whether server-side batched operations are enabled. |
+| [`forwardDeadLetteredMessagesTo`](#parameter-topicssubscriptionsforwarddeadletteredmessagesto) | string | The name of the recipient entity to which all the messages sent to the subscription are forwarded to. |
+| [`forwardTo`](#parameter-topicssubscriptionsforwardto) | string | The name of the recipient entity to which all the messages sent to the subscription are forwarded to. |
+| [`isClientAffine`](#parameter-topicssubscriptionsisclientaffine) | bool | A value that indicates whether the subscription supports the concept of session. |
+| [`lockDuration`](#parameter-topicssubscriptionslockduration) | string | ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute. |
+| [`maxDeliveryCount`](#parameter-topicssubscriptionsmaxdeliverycount) | int | Number of maximum deliveries. A message is automatically deadlettered after this number of deliveries. Default value is 10. |
+| [`requiresSession`](#parameter-topicssubscriptionsrequiressession) | bool | A value that indicates whether the subscription supports the concept of session. |
+| [`status`](#parameter-topicssubscriptionsstatus) | string | Enumerates the possible values for the status of a messaging entity. - Active, Disabled, Restoring, SendDisabled, ReceiveDisabled, Creating, Deleting, Renaming, Unknown. |
+
+### Parameter: `topics.subscriptions.name`
+
+The name of the service bus namespace topic subscription.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `topics.subscriptions.autoDeleteOnIdle`
+
+ISO 8601 timespan idle interval after which the syubscription is automatically deleted. The minimum duration is 5 minutes.
+
+- Required: No
+- Type: string
+
+### Parameter: `topics.subscriptions.clientAffineProperties`
+
+The properties that are associated with a subscription that is client-affine.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`clientId`](#parameter-topicssubscriptionsclientaffinepropertiesclientid) | string | Indicates the Client ID of the application that created the client-affine subscription. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`isDurable`](#parameter-topicssubscriptionsclientaffinepropertiesisdurable) | bool | For client-affine subscriptions, this value indicates whether the subscription is durable or not. |
+| [`isShared`](#parameter-topicssubscriptionsclientaffinepropertiesisshared) | bool | For client-affine subscriptions, this value indicates whether the subscription is shared or not. |
+
+### Parameter: `topics.subscriptions.clientAffineProperties.clientId`
+
+Indicates the Client ID of the application that created the client-affine subscription.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `topics.subscriptions.clientAffineProperties.isDurable`
+
+For client-affine subscriptions, this value indicates whether the subscription is durable or not.
+
+- Required: No
+- Type: bool
+
+### Parameter: `topics.subscriptions.clientAffineProperties.isShared`
+
+For client-affine subscriptions, this value indicates whether the subscription is shared or not.
+
+- Required: No
+- Type: bool
+
+### Parameter: `topics.subscriptions.deadLetteringOnFilterEvaluationExceptions`
+
+A value that indicates whether a subscription has dead letter support when a message expires.
+
+- Required: No
+- Type: bool
+
+### Parameter: `topics.subscriptions.deadLetteringOnMessageExpiration`
+
+A value that indicates whether a subscription has dead letter support when a message expires.
+
+- Required: No
+- Type: bool
+
+### Parameter: `topics.subscriptions.defaultMessageTimeToLive`
+
+ISO 8601 timespan idle interval after which the message expires. The minimum duration is 5 minutes.
+
+- Required: No
+- Type: string
+
+### Parameter: `topics.subscriptions.duplicateDetectionHistoryTimeWindow`
+
+ISO 8601 timespan that defines the duration of the duplicate detection history. The default value is 10 minutes.
+
+- Required: No
+- Type: string
+
+### Parameter: `topics.subscriptions.enableBatchedOperations`
+
+A value that indicates whether server-side batched operations are enabled.
+
+- Required: No
+- Type: bool
+
+### Parameter: `topics.subscriptions.forwardDeadLetteredMessagesTo`
+
+The name of the recipient entity to which all the messages sent to the subscription are forwarded to.
+
+- Required: No
+- Type: string
+
+### Parameter: `topics.subscriptions.forwardTo`
+
+The name of the recipient entity to which all the messages sent to the subscription are forwarded to.
+
+- Required: No
+- Type: string
+
+### Parameter: `topics.subscriptions.isClientAffine`
+
+A value that indicates whether the subscription supports the concept of session.
+
+- Required: No
+- Type: bool
+
+### Parameter: `topics.subscriptions.lockDuration`
+
+ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.
+
+- Required: No
+- Type: string
+
+### Parameter: `topics.subscriptions.maxDeliveryCount`
+
+Number of maximum deliveries. A message is automatically deadlettered after this number of deliveries. Default value is 10.
+
+- Required: No
+- Type: int
+
+### Parameter: `topics.subscriptions.requiresSession`
+
+A value that indicates whether the subscription supports the concept of session.
+
+- Required: No
+- Type: bool
+
+### Parameter: `topics.subscriptions.status`
+
+Enumerates the possible values for the status of a messaging entity. - Active, Disabled, Restoring, SendDisabled, ReceiveDisabled, Creating, Deleting, Renaming, Unknown.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Active'
+    'Creating'
+    'Deleting'
+    'Disabled'
+    'ReceiveDisabled'
+    'Renaming'
+    'Restoring'
+    'SendDisabled'
+    'Unknown'
+  ]
+  ```
+
 ### Parameter: `topics.supportOrdering`
 
 Value that indicates whether the topic supports ordering.
@@ -2677,3 +3010,7 @@ This section gives you an overview of all local-referenced module files (i.e., o
 | Reference | Type |
 | :-- | :-- |
 | `br/public:avm/res/network/private-endpoint:0.3.1` | Remote reference |
+
+## Data Collection
+
+The software may collect information about you and your use of the software and send it to Microsoft. Microsoft may use this information to provide services and improve our products and services. You may turn off the telemetry as described in the [repository](https://aka.ms/avm/telemetry). There are also some features in the software that may enable you and Microsoft to collect data from users of your applications. If you use these features, you must comply with applicable law, including providing appropriate notices to users of your applications together with a copy of Microsoft’s privacy statement. Our privacy statement is located at <https://go.microsoft.com/fwlink/?LinkID=824704>. You can learn more about data collection and use in the help documentation and our privacy statement. Your use of the software operates as your consent to these practices.

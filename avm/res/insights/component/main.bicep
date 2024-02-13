@@ -15,6 +15,18 @@ param applicationType string = 'web'
 @description('Required. Resource ID of the log analytics workspace which the data will be ingested to. This property is required to create an application with this API version. Applications from older versions will not have this property.')
 param workspaceResourceId string
 
+@description('Optional. Disable IP masking. Default value is set to true.')
+param disableIpMasking bool = true
+
+@description('Optional. Disable Non-AAD based Auth. Default value is set to false.')
+param disableLocalAuth bool = false
+
+@description('Optional. Force users to create their own storage account for profiler and debugger.')
+param forceCustomerStorageForProfiler bool = false
+
+@description('Optional. Linked storage account resource ID.')
+param linkedStorageAccountResourceId string = ''
+
 @description('Optional. The network access type for accessing Application Insights ingestion. - Enabled or Disabled.')
 @allowed([
   'Enabled'
@@ -99,11 +111,22 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   kind: kind
   properties: {
     Application_Type: applicationType
+    DisableIpMasking: disableIpMasking
+    DisableLocalAuth: disableLocalAuth
+    ForceCustomerStorageForProfiler: forceCustomerStorageForProfiler
     WorkspaceResourceId: workspaceResourceId
     publicNetworkAccessForIngestion: publicNetworkAccessForIngestion
     publicNetworkAccessForQuery: publicNetworkAccessForQuery
     RetentionInDays: retentionInDays
     SamplingPercentage: samplingPercentage
+  }
+}
+
+module linkedStorageAccount 'linkedStorageAccounts/main.bicep' = if (!empty(linkedStorageAccountResourceId)) {
+  name: '${uniqueString(deployment().name, location)}-appInsights-linkedStorageAccount'
+  params: {
+    appInsightsName: appInsights.name
+    storageAccountResourceId: linkedStorageAccountResourceId
   }
 }
 
@@ -182,7 +205,7 @@ type roleAssignmentType = {
   @description('Optional. The description of the role assignment.')
   description: string?
 
-  @description('Optional. The conditions on the role assignment. This limits the resources it can be assigned to. e.g.: @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName] StringEqualsIgnoreCase "foo_storage_container"')
+  @description('Optional. The conditions on the role assignment. This limits the resources it can be assigned to. e.g.: @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName] StringEqualsIgnoreCase "foo_storage_container".')
   condition: string?
 
   @description('Optional. Version of the condition.')
@@ -205,7 +228,7 @@ type diagnosticSettingType = {
     categoryGroup: string?
   }[]?
 
-  @description('Optional. The name of logs that will be streamed. "allLogs" includes all possible logs for the resource. Set to \'\' to disable log collection.')
+  @description('Optional. The name of metrics that will be streamed. "allMetrics" includes all possible metrics for the resource. Set to \'\' to disable metric collection.')
   metricCategories: {
     @description('Required. Name of a Diagnostic Metric category for a resource type this setting is applied to. Set to \'AllMetrics\' to collect all metrics.')
     category: string

@@ -358,7 +358,7 @@ module automationAccount_privateEndpoints 'br/public:avm/res/network/private-end
     ipConfigurations: privateEndpoint.?ipConfigurations
     applicationSecurityGroupResourceIds: privateEndpoint.?applicationSecurityGroupResourceIds
     customNetworkInterfaceName: privateEndpoint.?customNetworkInterfaceName
-    enableTelemetry: enableTelemetry
+    enableTelemetry: privateEndpoint.?enableTelemetry ?? enableTelemetry
   }
 }]
 
@@ -386,7 +386,7 @@ output resourceId string = automationAccount.id
 output resourceGroupName string = resourceGroup().name
 
 @description('The principal ID of the system assigned identity.')
-output systemAssignedMIPrincipalId string = (managedIdentities.?systemAssigned ?? false) && contains(automationAccount.identity, 'principalId') ? automationAccount.identity.principalId : ''
+output systemAssignedMIPrincipalId string = automationAccount.?identity.?principalId ?? ''
 
 @description('The location the resource was deployed into.')
 output location string = automationAccount.location
@@ -424,7 +424,7 @@ type roleAssignmentType = {
   @description('Optional. The description of the role assignment.')
   description: string?
 
-  @description('Optional. The conditions on the role assignment. This limits the resources it can be assigned to. e.g.: @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName] StringEqualsIgnoreCase "foo_storage_container"')
+  @description('Optional. The conditions on the role assignment. This limits the resources it can be assigned to. e.g.: @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName] StringEqualsIgnoreCase "foo_storage_container".')
   condition: string?
 
   @description('Optional. Version of the condition.')
@@ -515,7 +515,7 @@ type diagnosticSettingType = {
     categoryGroup: string?
   }[]?
 
-  @description('Optional. The name of logs that will be streamed. "allLogs" includes all possible logs for the resource. Set to \'\' to disable log collection.')
+  @description('Optional. The name of metrics that will be streamed. "allMetrics" includes all possible metrics for the resource. Set to \'\' to disable metric collection.')
   metricCategories: {
     @description('Required. Name of a Diagnostic Metric category for a resource type this setting is applied to. Set to \'AllMetrics\' to collect all metrics.')
     category: string

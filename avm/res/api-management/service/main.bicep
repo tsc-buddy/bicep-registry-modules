@@ -438,7 +438,7 @@ output resourceId string = service.id
 output resourceGroupName string = resourceGroup().name
 
 @description('The principal ID of the system assigned identity.')
-output systemAssignedMIPrincipalId string = (managedIdentities.?systemAssigned ?? false) && contains(service.identity, 'principalId') ? service.identity.principalId : ''
+output systemAssignedMIPrincipalId string = service.?identity.?principalId ?? ''
 
 @description('The location the resource was deployed into.')
 output location string = service.location
@@ -499,7 +499,7 @@ type diagnosticSettingType = {
     categoryGroup: string?
   }[]?
 
-  @description('Optional. The name of logs that will be streamed. "allLogs" includes all possible logs for the resource. Set to \'\' to disable log collection.')
+  @description('Optional. The name of metrics that will be streamed. "allMetrics" includes all possible metrics for the resource. Set to \'\' to disable metric collection.')
   metricCategories: {
     @description('Required. Name of a Diagnostic Metric category for a resource type this setting is applied to. Set to \'AllMetrics\' to collect all metrics.')
     category: string
