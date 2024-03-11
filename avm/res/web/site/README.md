@@ -38,13 +38,517 @@ The following section provides usage examples for the module, which were used to
 
 >**Note**: To reference the module, please use the following syntax `br/public:avm/res/web/site:<version>`.
 
-- [Function App, using only defaults](#example-1-function-app-using-only-defaults)
-- [Function App, using large parameter set](#example-2-function-app-using-large-parameter-set)
-- [WAF-aligned](#example-3-waf-aligned)
-- [Web App, using only defaults](#example-4-web-app-using-only-defaults)
-- [Web App, using large parameter set](#example-5-web-app-using-large-parameter-set)
+- [Linux Web App, using only defaults](#example-1-linux-web-app-using-only-defaults)
+- [Web App, using large parameter set](#example-2-web-app-using-large-parameter-set)
+- [Function App, using only defaults](#example-3-function-app-using-only-defaults)
+- [Function App, using large parameter set](#example-4-function-app-using-large-parameter-set)
+- [WAF-aligned](#example-5-waf-aligned)
+- [Web App, using only defaults](#example-6-web-app-using-only-defaults)
+- [Web App, using large parameter set](#example-7-web-app-using-large-parameter-set)
 
-### Example 1: _Function App, using only defaults_
+### Example 1: _Linux Web App, using only defaults_
+
+This instance deploys the module as a Linux Web App with the minimum set of required parameters.
+
+
+<details>
+
+<summary>via Bicep module</summary>
+
+```bicep
+module site 'br/public:avm/res/web/site:<version>' = {
+  name: '${uniqueString(deployment().name, resourceLocation)}-test-wswamin'
+  params: {
+    // Required parameters
+    kind: 'app,linux'
+    name: 'wswamin001'
+    serverFarmResourceId: '<serverFarmResourceId>'
+    // Non-required parameters
+    location: '<location>'
+  }
+}
+```
+
+</details>
+<p>
+
+<details>
+
+<summary>via JSON Parameter file</summary>
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    // Required parameters
+    "kind": {
+      "value": "app,linux"
+    },
+    "name": {
+      "value": "wswamin001"
+    },
+    "serverFarmResourceId": {
+      "value": "<serverFarmResourceId>"
+    },
+    // Non-required parameters
+    "location": {
+      "value": "<location>"
+    }
+  }
+}
+```
+
+</details>
+<p>
+
+### Example 2: _Web App, using large parameter set_
+
+This instance deploys the module as Web App with most of its features enabled.
+
+
+<details>
+
+<summary>via Bicep module</summary>
+
+```bicep
+module site 'br/public:avm/res/web/site:<version>' = {
+  name: '${uniqueString(deployment().name, resourceLocation)}-test-wswamax'
+  params: {
+    // Required parameters
+    kind: 'app,linux'
+    name: 'wswamax001'
+    serverFarmResourceId: '<serverFarmResourceId>'
+    // Non-required parameters
+    basicPublishingCredentialsPolicies: [
+      {
+        allow: false
+        name: 'ftp'
+      }
+      {
+        allow: false
+        name: 'scm'
+      }
+    ]
+    diagnosticSettings: [
+      {
+        eventHubAuthorizationRuleResourceId: '<eventHubAuthorizationRuleResourceId>'
+        eventHubName: '<eventHubName>'
+        metricCategories: [
+          {
+            category: 'AllMetrics'
+          }
+        ]
+        name: 'customSetting'
+        storageAccountResourceId: '<storageAccountResourceId>'
+        workspaceResourceId: '<workspaceResourceId>'
+      }
+    ]
+    httpsOnly: true
+    hybridConnectionRelays: [
+      {
+        resourceId: '<resourceId>'
+        sendKeyName: 'defaultSender'
+      }
+    ]
+    location: '<location>'
+    lock: {
+      kind: 'CanNotDelete'
+      name: 'myCustomLockName'
+    }
+    managedIdentities: {
+      systemAssigned: true
+      userAssignedResourceIds: [
+        '<managedIdentityResourceId>'
+      ]
+    }
+    privateEndpoints: [
+      {
+        privateDnsZoneResourceIds: [
+          '<privateDNSZoneResourceId>'
+        ]
+        subnetResourceId: '<subnetResourceId>'
+        tags: {
+          Environment: 'Non-Prod'
+          'hidden-title': 'This is visible in the resource name'
+          Role: 'DeploymentValidation'
+        }
+      }
+      {
+        privateDnsZoneResourceIds: [
+          '<privateDNSZoneResourceId>'
+        ]
+        subnetResourceId: '<subnetResourceId>'
+      }
+    ]
+    publicNetworkAccess: 'Disabled'
+    roleAssignments: [
+      {
+        principalId: '<principalId>'
+        principalType: 'ServicePrincipal'
+        roleDefinitionIdOrName: 'Owner'
+      }
+      {
+        principalId: '<principalId>'
+        principalType: 'ServicePrincipal'
+        roleDefinitionIdOrName: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+      }
+      {
+        principalId: '<principalId>'
+        principalType: 'ServicePrincipal'
+        roleDefinitionIdOrName: '<roleDefinitionIdOrName>'
+      }
+    ]
+    scmSiteAlsoStopped: true
+    siteConfig: {
+      alwaysOn: true
+      metadata: [
+        {
+          name: 'CURRENT_STACK'
+          value: 'dotnetcore'
+        }
+      ]
+    }
+    slots: [
+      {
+        basicPublishingCredentialsPolicies: [
+          {
+            allow: false
+            name: 'ftp'
+          }
+          {
+            allow: false
+            name: 'scm'
+          }
+        ]
+        diagnosticSettings: [
+          {
+            eventHubAuthorizationRuleResourceId: '<eventHubAuthorizationRuleResourceId>'
+            eventHubName: '<eventHubName>'
+            name: 'customSetting'
+            storageAccountResourceId: '<storageAccountResourceId>'
+            workspaceResourceId: '<workspaceResourceId>'
+          }
+        ]
+        hybridConnectionRelays: [
+          {
+            resourceId: '<resourceId>'
+            sendKeyName: 'defaultSender'
+          }
+        ]
+        name: 'slot1'
+        privateEndpoints: [
+          {
+            privateDnsZoneResourceIds: [
+              '<privateDNSZoneResourceId>'
+            ]
+            service: 'sites-slot1'
+            subnetResourceId: '<subnetResourceId>'
+            tags: {
+              Environment: 'Non-Prod'
+              'hidden-title': 'This is visible in the resource name'
+              Role: 'DeploymentValidation'
+            }
+          }
+        ]
+        roleAssignments: [
+          {
+            principalId: '<principalId>'
+            principalType: 'ServicePrincipal'
+            roleDefinitionIdOrName: 'Owner'
+          }
+          {
+            principalId: '<principalId>'
+            principalType: 'ServicePrincipal'
+            roleDefinitionIdOrName: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+          }
+          {
+            principalId: '<principalId>'
+            principalType: 'ServicePrincipal'
+            roleDefinitionIdOrName: '<roleDefinitionIdOrName>'
+          }
+        ]
+        siteConfig: {
+          alwaysOn: true
+          metadata: [
+            {
+              name: 'CURRENT_STACK'
+              value: 'dotnetcore'
+            }
+          ]
+        }
+        storageAccountResourceId: '<storageAccountResourceId>'
+        storageAccountUseIdentityAuthentication: true
+      }
+      {
+        basicPublishingCredentialsPolicies: [
+          {
+            name: 'ftp'
+          }
+          {
+            name: 'scm'
+          }
+        ]
+        name: 'slot2'
+        storageAccountResourceId: '<storageAccountResourceId>'
+        storageAccountUseIdentityAuthentication: true
+      }
+    ]
+    storageAccountResourceId: '<storageAccountResourceId>'
+    storageAccountUseIdentityAuthentication: true
+    vnetContentShareEnabled: true
+    vnetImagePullEnabled: true
+    vnetRouteAllEnabled: true
+  }
+}
+```
+
+</details>
+<p>
+
+<details>
+
+<summary>via JSON Parameter file</summary>
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    // Required parameters
+    "kind": {
+      "value": "app,linux"
+    },
+    "name": {
+      "value": "wswamax001"
+    },
+    "serverFarmResourceId": {
+      "value": "<serverFarmResourceId>"
+    },
+    // Non-required parameters
+    "basicPublishingCredentialsPolicies": {
+      "value": [
+        {
+          "allow": false,
+          "name": "ftp"
+        },
+        {
+          "allow": false,
+          "name": "scm"
+        }
+      ]
+    },
+    "diagnosticSettings": {
+      "value": [
+        {
+          "eventHubAuthorizationRuleResourceId": "<eventHubAuthorizationRuleResourceId>",
+          "eventHubName": "<eventHubName>",
+          "metricCategories": [
+            {
+              "category": "AllMetrics"
+            }
+          ],
+          "name": "customSetting",
+          "storageAccountResourceId": "<storageAccountResourceId>",
+          "workspaceResourceId": "<workspaceResourceId>"
+        }
+      ]
+    },
+    "httpsOnly": {
+      "value": true
+    },
+    "hybridConnectionRelays": {
+      "value": [
+        {
+          "resourceId": "<resourceId>",
+          "sendKeyName": "defaultSender"
+        }
+      ]
+    },
+    "location": {
+      "value": "<location>"
+    },
+    "lock": {
+      "value": {
+        "kind": "CanNotDelete",
+        "name": "myCustomLockName"
+      }
+    },
+    "managedIdentities": {
+      "value": {
+        "systemAssigned": true,
+        "userAssignedResourceIds": [
+          "<managedIdentityResourceId>"
+        ]
+      }
+    },
+    "privateEndpoints": {
+      "value": [
+        {
+          "privateDnsZoneResourceIds": [
+            "<privateDNSZoneResourceId>"
+          ],
+          "subnetResourceId": "<subnetResourceId>",
+          "tags": {
+            "Environment": "Non-Prod",
+            "hidden-title": "This is visible in the resource name",
+            "Role": "DeploymentValidation"
+          }
+        },
+        {
+          "privateDnsZoneResourceIds": [
+            "<privateDNSZoneResourceId>"
+          ],
+          "subnetResourceId": "<subnetResourceId>"
+        }
+      ]
+    },
+    "publicNetworkAccess": {
+      "value": "Disabled"
+    },
+    "roleAssignments": {
+      "value": [
+        {
+          "principalId": "<principalId>",
+          "principalType": "ServicePrincipal",
+          "roleDefinitionIdOrName": "Owner"
+        },
+        {
+          "principalId": "<principalId>",
+          "principalType": "ServicePrincipal",
+          "roleDefinitionIdOrName": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+        },
+        {
+          "principalId": "<principalId>",
+          "principalType": "ServicePrincipal",
+          "roleDefinitionIdOrName": "<roleDefinitionIdOrName>"
+        }
+      ]
+    },
+    "scmSiteAlsoStopped": {
+      "value": true
+    },
+    "siteConfig": {
+      "value": {
+        "alwaysOn": true,
+        "metadata": [
+          {
+            "name": "CURRENT_STACK",
+            "value": "dotnetcore"
+          }
+        ]
+      }
+    },
+    "slots": {
+      "value": [
+        {
+          "basicPublishingCredentialsPolicies": [
+            {
+              "allow": false,
+              "name": "ftp"
+            },
+            {
+              "allow": false,
+              "name": "scm"
+            }
+          ],
+          "diagnosticSettings": [
+            {
+              "eventHubAuthorizationRuleResourceId": "<eventHubAuthorizationRuleResourceId>",
+              "eventHubName": "<eventHubName>",
+              "name": "customSetting",
+              "storageAccountResourceId": "<storageAccountResourceId>",
+              "workspaceResourceId": "<workspaceResourceId>"
+            }
+          ],
+          "hybridConnectionRelays": [
+            {
+              "resourceId": "<resourceId>",
+              "sendKeyName": "defaultSender"
+            }
+          ],
+          "name": "slot1",
+          "privateEndpoints": [
+            {
+              "privateDnsZoneResourceIds": [
+                "<privateDNSZoneResourceId>"
+              ],
+              "service": "sites-slot1",
+              "subnetResourceId": "<subnetResourceId>",
+              "tags": {
+                "Environment": "Non-Prod",
+                "hidden-title": "This is visible in the resource name",
+                "Role": "DeploymentValidation"
+              }
+            }
+          ],
+          "roleAssignments": [
+            {
+              "principalId": "<principalId>",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionIdOrName": "Owner"
+            },
+            {
+              "principalId": "<principalId>",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionIdOrName": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+            },
+            {
+              "principalId": "<principalId>",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionIdOrName": "<roleDefinitionIdOrName>"
+            }
+          ],
+          "siteConfig": {
+            "alwaysOn": true,
+            "metadata": [
+              {
+                "name": "CURRENT_STACK",
+                "value": "dotnetcore"
+              }
+            ]
+          },
+          "storageAccountResourceId": "<storageAccountResourceId>",
+          "storageAccountUseIdentityAuthentication": true
+        },
+        {
+          "basicPublishingCredentialsPolicies": [
+            {
+              "name": "ftp"
+            },
+            {
+              "name": "scm"
+            }
+          ],
+          "name": "slot2",
+          "storageAccountResourceId": "<storageAccountResourceId>",
+          "storageAccountUseIdentityAuthentication": true
+        }
+      ]
+    },
+    "storageAccountResourceId": {
+      "value": "<storageAccountResourceId>"
+    },
+    "storageAccountUseIdentityAuthentication": {
+      "value": true
+    },
+    "vnetContentShareEnabled": {
+      "value": true
+    },
+    "vnetImagePullEnabled": {
+      "value": true
+    },
+    "vnetRouteAllEnabled": {
+      "value": true
+    }
+  }
+}
+```
+
+</details>
+<p>
+
+### Example 3: _Function App, using only defaults_
 
 This instance deploys the module as Function App with the minimum set of required parameters.
 
@@ -108,7 +612,7 @@ module site 'br/public:avm/res/web/site:<version>' = {
 </details>
 <p>
 
-### Example 2: _Function App, using large parameter set_
+### Example 4: _Function App, using large parameter set_
 
 This instance deploys the module as Function App with most of its features enabled.
 
@@ -496,7 +1000,7 @@ module site 'br/public:avm/res/web/site:<version>' = {
 </details>
 <p>
 
-### Example 3: _WAF-aligned_
+### Example 5: _WAF-aligned_
 
 This instance deploys the module in alignment with the best-practices of the Azure Well-Architected Framework.
 
@@ -636,7 +1140,7 @@ module site 'br/public:avm/res/web/site:<version>' = {
 </details>
 <p>
 
-### Example 4: _Web App, using only defaults_
+### Example 6: _Web App, using only defaults_
 
 This instance deploys the module as Web App with the minimum set of required parameters.
 
@@ -692,7 +1196,7 @@ module site 'br/public:avm/res/web/site:<version>' = {
 </details>
 <p>
 
-### Example 5: _Web App, using large parameter set_
+### Example 7: _Web App, using large parameter set_
 
 This instance deploys the module as Web App with most of its features enabled.
 
@@ -1203,6 +1707,7 @@ Type of site to deploy.
   ```Bicep
   [
     'app'
+    'app,linux'
     'functionapp'
     'functionapp,linux'
     'functionapp,workflowapp'
