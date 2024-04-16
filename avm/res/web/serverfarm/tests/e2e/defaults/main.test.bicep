@@ -51,7 +51,7 @@ module testDeployment '../../../main.bicep' = [
         tier: 'Standard'
         size: 'S1'
         family: 'S'
-        capacity: 1
+        capacity: 2
       }
     }
   }
