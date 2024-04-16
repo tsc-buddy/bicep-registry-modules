@@ -48,7 +48,7 @@ module serverfarm 'br/public:avm/res/web/serverfarm:<version>' = {
     // Required parameters
     name: 'wsfmin001'
     sku: {
-      capacity: 1
+      capacity: 2
       family: 'S'
       name: 'S1'
       size: 'S1'
@@ -78,7 +78,7 @@ module serverfarm 'br/public:avm/res/web/serverfarm:<version>' = {
     },
     "sku": {
       "value": {
-        "capacity": 1,
+        "capacity": 2,
         "family": "S",
         "name": "S1",
         "size": "S1",
