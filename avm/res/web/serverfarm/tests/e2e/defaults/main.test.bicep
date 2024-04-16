@@ -47,11 +47,11 @@ module testDeployment '../../../main.bicep' = [
       name: '${namePrefix}${serviceShort}001'
       location: tempLocation
       sku: {
-        name: 'P1v3'
-        tier: 'Premium'
-        size: 'P1v3'
-        family: 'P'
-        capacity: 3
+        name: 'S1'
+        tier: 'Standard'
+        size: 'S1'
+        family: 'S'
+        capacity: 1
       }
     }
   }
