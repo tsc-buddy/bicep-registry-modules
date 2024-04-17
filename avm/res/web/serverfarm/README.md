@@ -113,10 +113,10 @@ module serverfarm 'br/public:avm/res/web/serverfarm:<version>' = {
     name: 'wsfmax001'
     sku: {
       capacity: 3
-      family: 'P'
+      family: 'Pv3'
       name: 'P1v3'
       size: 'P1v3'
-      tier: 'Premium'
+      tier: 'PremiumV3'
     }
     // Non-required parameters
     diagnosticSettings: [
@@ -186,10 +186,10 @@ module serverfarm 'br/public:avm/res/web/serverfarm:<version>' = {
     "sku": {
       "value": {
         "capacity": 3,
-        "family": "P",
+        "family": "Pv3",
         "name": "P1v3",
         "size": "P1v3",
-        "tier": "Premium"
+        "tier": "PremiumV3"
       }
     },
     // Non-required parameters
@@ -277,10 +277,10 @@ module serverfarm 'br/public:avm/res/web/serverfarm:<version>' = {
     name: 'wsfwaf001'
     sku: {
       capacity: 3
-      family: 'P'
+      family: 'Pv3'
       name: 'P1v3'
       size: 'P1v3'
-      tier: 'Premium'
+      tier: 'PremiumV3'
     }
     // Non-required parameters
     diagnosticSettings: [
@@ -332,10 +332,10 @@ module serverfarm 'br/public:avm/res/web/serverfarm:<version>' = {
     "sku": {
       "value": {
         "capacity": 3,
-        "family": "P",
+        "family": "Pv3",
         "name": "P1v3",
         "size": "P1v3",
-        "tier": "Premium"
+        "tier": "PremiumV3"
       }
     },
     // Non-required parameters

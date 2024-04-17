@@ -18,7 +18,7 @@ param resourceLocation string = deployment().location
 param serviceShort string = 'wsfmax'
 
 @description('Optional. A token to inject into the name of each resource. This value can be automatically injected by the CI.')
-param namePrefix string = '#_namePrefix_#'
+param namePrefix string = 'np'
 
 #disable-next-line no-hardcoded-location // Just a value to avoid ongoing capacity challenges
 var tempLocation = 'eastus'
@@ -69,9 +69,9 @@ module testDeployment '../../../main.bicep' = [
       location: tempLocation
       sku: {
         name: 'P1v3'
-        tier: 'Premium'
+        tier: 'PremiumV3'
         size: 'P1v3'
-        family: 'P'
+        family: 'Pv3'
         capacity: 3
       }
       perSiteScaling: true

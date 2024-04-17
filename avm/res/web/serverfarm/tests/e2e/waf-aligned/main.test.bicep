@@ -60,9 +60,9 @@ module testDeployment '../../../main.bicep' = [
       location: tempLocation
       sku: {
         name: 'P1v3'
-        tier: 'Premium'
+        tier: 'PremiumV3'
         size: 'P1v3'
-        family: 'P'
+        family: 'Pv3'
         capacity: 3
       }
       zoneRedundant: true
