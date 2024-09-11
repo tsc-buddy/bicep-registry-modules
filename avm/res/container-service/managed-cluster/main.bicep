@@ -151,7 +151,14 @@ param enablePrivateClusterPublicFQDN bool = false
 param privateDNSZone string?
 
 @description('Required. Properties of the primary agent pool.')
-param primaryAgentPoolProfile array
+param primaryAgentPoolProfile array = [
+  {
+    availabilityZones: [
+      3
+    ]
+    count: 3
+  }
+]
 
 @description('Optional. Define one or more secondary/additional agent pools.')
 param agentPools agentPoolType
@@ -771,8 +778,8 @@ module managedCluster_agentPools 'agent-pool/main.bicep' = [
     params: {
       managedClusterName: managedCluster.?name
       name: agentPool.name
-      availabilityZones: agentPool.?availabilityZones
-      count: agentPool.?count
+      availabilityZones: agentPool.?availabilityZones ?? [3]
+      count: agentPool.?count ?? [3]
       sourceResourceId: agentPool.?sourceResourceId
       enableAutoScaling: agentPool.?enableAutoScaling
       enableEncryptionAtHost: agentPool.?enableEncryptionAtHost
