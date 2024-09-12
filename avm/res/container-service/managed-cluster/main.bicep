@@ -772,17 +772,10 @@ resource managedCluster 'Microsoft.ContainerService/managedClusters@2024-03-02-p
   }
 }
 
-module managedCluster_clustermaintenanceConfigurations 'maintenance-configurations/main.bicep' = if (!empty(clusterMaintenanceConfiguration)) {
+module managedCluster_maintenanceConfigurations 'maintenance-configurations/main.bicep' = if (!empty(clusterMaintenanceConfiguration) || !empty(nodeMaintenanceConfiguration)) {
   name: '${uniqueString(deployment().name, location)}-ManagedCluster-MaintenanceConfigurations'
   params: {
     clusterMaintenanceWindow: clusterMaintenanceConfiguration!.maintenanceWindow
-    managedClusterName: managedCluster.name
-  }
-}
-
-module managedCluster_nodeMaintenanceConfigurations 'maintenance-configurations/main.bicep' = if (!empty(nodeMaintenanceConfiguration)) {
-  name: '${uniqueString(deployment().name, location)}-ManagedCluster-MaintenanceConfigurations'
-  params: {
     nodeMaintenanceWindow: nodeMaintenanceConfiguration!.maintenanceWindow
     managedClusterName: managedCluster.name
   }
