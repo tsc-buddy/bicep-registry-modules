@@ -42,6 +42,23 @@ module testDeployment '../../../main.bicep' = [
       managedIdentities: {
         systemAssigned: true
       }
+      maintenanceConfiguration: {
+        maintenanceWindow: {
+          schedule: {
+            daily: null
+            weekly: {
+              intervalWeeks: 1
+              dayOfWeek: 'Sunday'
+            }
+            absoluteMonthly: null
+            relativeMonthly: null
+          }
+          durationHours: 4
+          utcOffset: '+00:00'
+          startDate: '2024-07-03'
+          startTime: '00:00'
+        }
+      }
     }
   }
 ]

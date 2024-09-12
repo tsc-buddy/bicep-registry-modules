@@ -682,6 +682,23 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     name: 'csmin001'
     // Non-required parameters
     location: '<location>'
+    maintenanceConfiguration: {
+      maintenanceWindow: {
+        durationHours: 4
+        schedule: {
+          absoluteMonthly: '<absoluteMonthly>'
+          daily: '<daily>'
+          relativeMonthly: '<relativeMonthly>'
+          weekly: {
+            dayOfWeek: 'Sunday'
+            intervalWeeks: 1
+          }
+        }
+        startDate: '2024-07-03'
+        startTime: '00:00'
+        utcOffset: '+00:00'
+      }
+    }
     managedIdentities: {
       systemAssigned: true
     }
@@ -708,6 +725,25 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     // Non-required parameters
     "location": {
       "value": "<location>"
+    },
+    "maintenanceConfiguration": {
+      "value": {
+        "maintenanceWindow": {
+          "durationHours": 4,
+          "schedule": {
+            "absoluteMonthly": "<absoluteMonthly>",
+            "daily": "<daily>",
+            "relativeMonthly": "<relativeMonthly>",
+            "weekly": {
+              "dayOfWeek": "Sunday",
+              "intervalWeeks": 1
+            }
+          },
+          "startDate": "2024-07-03",
+          "startTime": "00:00",
+          "utcOffset": "+00:00"
+        }
+      }
     },
     "managedIdentities": {
       "value": {
