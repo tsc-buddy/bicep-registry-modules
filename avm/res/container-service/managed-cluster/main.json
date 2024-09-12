@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "878040139072965014"
+      "templateHash": "12305025161226006756"
     },
     "name": "Azure Kubernetes Service (AKS) Managed Clusters",
     "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster.",
@@ -1874,7 +1874,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "8720020650695923698"
+              "templateHash": "10977023139923657698"
             },
             "name": "Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations",
             "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations.",
@@ -1961,17 +1961,17 @@
               },
               "value": "[parameters('nodeMaintenanceName')]"
             },
-            "clusterMaintenanceResourceId": {
+            "resourceId": {
               "type": "string",
               "metadata": {
-                "description": "The resource ID of the maintenance configuration."
+                "description": "The resource ID of the cluster maintenance configuration."
               },
               "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('clusterMaintenanceName'))]"
             },
             "nodeMaintenanceResourceId": {
               "type": "string",
               "metadata": {
-                "description": "The resource ID of the maintenance configuration."
+                "description": "The resource ID of the node maintenance configuration."
               },
               "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('nodeMaintenanceName'))]"
             },
@@ -2015,7 +2015,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "8720020650695923698"
+              "templateHash": "10977023139923657698"
             },
             "name": "Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations",
             "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations.",
@@ -2102,17 +2102,17 @@
               },
               "value": "[parameters('nodeMaintenanceName')]"
             },
-            "clusterMaintenanceResourceId": {
+            "resourceId": {
               "type": "string",
               "metadata": {
-                "description": "The resource ID of the maintenance configuration."
+                "description": "The resource ID of the cluster maintenance configuration."
               },
               "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('clusterMaintenanceName'))]"
             },
             "nodeMaintenanceResourceId": {
               "type": "string",
               "metadata": {
-                "description": "The resource ID of the maintenance configuration."
+                "description": "The resource ID of the node maintenance configuration."
               },
               "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('nodeMaintenanceName'))]"
             },

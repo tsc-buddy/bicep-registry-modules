@@ -79,7 +79,7 @@ Name of the maintenance configuration.
 | Output | Type | Description |
 | :-- | :-- | :-- |
 | `clusterMaintenanceName` | string | The name of the maintenance configuration. |
-| `clusterMaintenanceResourceId` | string | The resource ID of the maintenance configuration. |
 | `nodeMaintenanceName` | string | The name of the maintenance configuration. |
-| `nodeMaintenanceResourceId` | string | The resource ID of the maintenance configuration. |
+| `nodeMaintenanceResourceId` | string | The resource ID of the node maintenance configuration. |
 | `resourceGroupName` | string | The resource group the agent pool was deployed into. |
+| `resourceId` | string | The resource ID of the cluster maintenance configuration. |
