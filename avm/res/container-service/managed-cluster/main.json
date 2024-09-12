@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "14221775645445895015"
+      "templateHash": "878040139072965014"
     },
     "name": "Azure Kubernetes Service (AKS) Managed Clusters",
     "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster.",
@@ -670,13 +670,25 @@
       },
       "nullable": true
     },
-    "maintenanceConfigurationType": {
+    "clusterMaintenanceConfigurationType": {
       "type": "object",
       "properties": {
         "maintenanceWindow": {
           "type": "object",
           "metadata": {
-            "description": "Required. Maintenance window for the maintenance configuration."
+            "description": "Required. Maintenance window for the cluster maintenance configuration."
+          }
+        }
+      },
+      "nullable": true
+    },
+    "nodeMaintenanceConfigurationType": {
+      "type": "object",
+      "properties": {
+        "maintenanceWindow": {
+          "type": "object",
+          "metadata": {
+            "description": "Required. Maintenance window for the node maintenance configuration."
           }
         }
       },
@@ -998,8 +1010,14 @@
         "description": "Optional. Define one or more secondary/additional agent pools."
       }
     },
-    "maintenanceConfiguration": {
-      "$ref": "#/definitions/maintenanceConfigurationType",
+    "clusterMaintenanceConfiguration": {
+      "$ref": "#/definitions/clusterMaintenanceConfigurationType",
+      "metadata": {
+        "description": "Optional. Whether or not to use AKS Automatic mode."
+      }
+    },
+    "nodeMaintenanceConfiguration": {
+      "$ref": "#/definitions/nodeMaintenanceConfigurationType",
       "metadata": {
         "description": "Optional. Whether or not to use AKS Automatic mode."
       }
@@ -1830,8 +1848,8 @@
         "managedCluster"
       ]
     },
-    "managedCluster_maintenanceConfigurations": {
-      "condition": "[not(empty(parameters('maintenanceConfiguration')))]",
+    "managedCluster_clustermaintenanceConfigurations": {
+      "condition": "[not(empty(parameters('clusterMaintenanceConfiguration')))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "[format('{0}-ManagedCluster-MaintenanceConfigurations', uniqueString(deployment().name, parameters('location')))]",
@@ -1841,8 +1859,8 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "maintenanceWindow": {
-            "value": "[parameters('maintenanceConfiguration').maintenanceWindow]"
+          "clusterMaintenanceWindow": {
+            "value": "[parameters('clusterMaintenanceConfiguration').maintenanceWindow]"
           },
           "managedClusterName": {
             "value": "[parameters('name')]"
@@ -1850,22 +1868,31 @@
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "languageVersion": "2.0",
           "contentVersion": "1.0.0.0",
           "metadata": {
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "12168542117744033419"
+              "templateHash": "8720020650695923698"
             },
             "name": "Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations",
             "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations.",
             "owner": "Azure/module-maintainers"
           },
           "parameters": {
-            "maintenanceWindow": {
+            "clusterMaintenanceWindow": {
               "type": "object",
+              "nullable": true,
               "metadata": {
-                "description": "Required. Maintenance window for the maintenance configuration."
+                "description": "Required. Maintenance window for the cluster maintenance configuration."
+              }
+            },
+            "nodeMaintenanceWindow": {
+              "type": "object",
+              "nullable": true,
+              "metadata": {
+                "description": "Required. Maintenance window for the node maintenance configuration."
               }
             },
             "managedClusterName": {
@@ -1874,38 +1901,220 @@
                 "description": "Conditional. The name of the parent managed cluster. Required if the template is used in a standalone deployment."
               }
             },
-            "name": {
+            "clusterMaintenanceName": {
               "type": "string",
               "defaultValue": "aksManagedAutoUpgradeSchedule",
               "metadata": {
                 "description": "Optional. Name of the maintenance configuration."
               }
-            }
-          },
-          "resources": [
-            {
-              "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
-              "apiVersion": "2023-10-01",
-              "name": "[format('{0}/{1}', parameters('managedClusterName'), parameters('name'))]",
-              "properties": {
-                "maintenanceWindow": "[parameters('maintenanceWindow')]"
+            },
+            "nodeMaintenanceName": {
+              "type": "string",
+              "defaultValue": "aksManagedNodeOSUpgradeSchedule",
+              "metadata": {
+                "description": "Optional. Name of the maintenance configuration."
               }
             }
-          ],
+          },
+          "resources": {
+            "managedCluster": {
+              "existing": true,
+              "type": "Microsoft.ContainerService/managedClusters",
+              "apiVersion": "2024-03-02-preview",
+              "name": "[parameters('managedClusterName')]"
+            },
+            "aksManagedAutoUpgradeSchedule": {
+              "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+              "apiVersion": "2023-10-01",
+              "name": "[format('{0}/{1}', parameters('managedClusterName'), parameters('clusterMaintenanceName'))]",
+              "properties": {
+                "maintenanceWindow": "[parameters('clusterMaintenanceWindow')]"
+              },
+              "dependsOn": [
+                "managedCluster"
+              ]
+            },
+            "aksManagedNodeOSUpgradeSchedule": {
+              "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+              "apiVersion": "2024-03-02-preview",
+              "name": "[format('{0}/{1}', parameters('managedClusterName'), parameters('nodeMaintenanceName'))]",
+              "properties": {
+                "maintenanceWindow": "[parameters('nodeMaintenanceWindow')]"
+              },
+              "dependsOn": [
+                "managedCluster"
+              ]
+            }
+          },
           "outputs": {
-            "name": {
+            "clusterMaintenanceName": {
               "type": "string",
               "metadata": {
                 "description": "The name of the maintenance configuration."
               },
-              "value": "[parameters('name')]"
+              "value": "[parameters('clusterMaintenanceName')]"
             },
-            "resourceId": {
+            "nodeMaintenanceName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the maintenance configuration."
+              },
+              "value": "[parameters('nodeMaintenanceName')]"
+            },
+            "clusterMaintenanceResourceId": {
               "type": "string",
               "metadata": {
                 "description": "The resource ID of the maintenance configuration."
               },
-              "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('name'))]"
+              "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('clusterMaintenanceName'))]"
+            },
+            "nodeMaintenanceResourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the maintenance configuration."
+              },
+              "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('nodeMaintenanceName'))]"
+            },
+            "resourceGroupName": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource group the agent pool was deployed into."
+              },
+              "value": "[resourceGroup().name]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "managedCluster"
+      ]
+    },
+    "managedCluster_nodeMaintenanceConfigurations": {
+      "condition": "[not(empty(parameters('nodeMaintenanceConfiguration')))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}-ManagedCluster-MaintenanceConfigurations', uniqueString(deployment().name, parameters('location')))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "nodeMaintenanceWindow": {
+            "value": "[parameters('nodeMaintenanceConfiguration').maintenanceWindow]"
+          },
+          "managedClusterName": {
+            "value": "[parameters('name')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "languageVersion": "2.0",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.29.47.4906",
+              "templateHash": "8720020650695923698"
+            },
+            "name": "Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations",
+            "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations.",
+            "owner": "Azure/module-maintainers"
+          },
+          "parameters": {
+            "clusterMaintenanceWindow": {
+              "type": "object",
+              "nullable": true,
+              "metadata": {
+                "description": "Required. Maintenance window for the cluster maintenance configuration."
+              }
+            },
+            "nodeMaintenanceWindow": {
+              "type": "object",
+              "nullable": true,
+              "metadata": {
+                "description": "Required. Maintenance window for the node maintenance configuration."
+              }
+            },
+            "managedClusterName": {
+              "type": "string",
+              "metadata": {
+                "description": "Conditional. The name of the parent managed cluster. Required if the template is used in a standalone deployment."
+              }
+            },
+            "clusterMaintenanceName": {
+              "type": "string",
+              "defaultValue": "aksManagedAutoUpgradeSchedule",
+              "metadata": {
+                "description": "Optional. Name of the maintenance configuration."
+              }
+            },
+            "nodeMaintenanceName": {
+              "type": "string",
+              "defaultValue": "aksManagedNodeOSUpgradeSchedule",
+              "metadata": {
+                "description": "Optional. Name of the maintenance configuration."
+              }
+            }
+          },
+          "resources": {
+            "managedCluster": {
+              "existing": true,
+              "type": "Microsoft.ContainerService/managedClusters",
+              "apiVersion": "2024-03-02-preview",
+              "name": "[parameters('managedClusterName')]"
+            },
+            "aksManagedAutoUpgradeSchedule": {
+              "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+              "apiVersion": "2023-10-01",
+              "name": "[format('{0}/{1}', parameters('managedClusterName'), parameters('clusterMaintenanceName'))]",
+              "properties": {
+                "maintenanceWindow": "[parameters('clusterMaintenanceWindow')]"
+              },
+              "dependsOn": [
+                "managedCluster"
+              ]
+            },
+            "aksManagedNodeOSUpgradeSchedule": {
+              "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+              "apiVersion": "2024-03-02-preview",
+              "name": "[format('{0}/{1}', parameters('managedClusterName'), parameters('nodeMaintenanceName'))]",
+              "properties": {
+                "maintenanceWindow": "[parameters('nodeMaintenanceWindow')]"
+              },
+              "dependsOn": [
+                "managedCluster"
+              ]
+            }
+          },
+          "outputs": {
+            "clusterMaintenanceName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the maintenance configuration."
+              },
+              "value": "[parameters('clusterMaintenanceName')]"
+            },
+            "nodeMaintenanceName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the maintenance configuration."
+              },
+              "value": "[parameters('nodeMaintenanceName')]"
+            },
+            "clusterMaintenanceResourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the maintenance configuration."
+              },
+              "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('clusterMaintenanceName'))]"
+            },
+            "nodeMaintenanceResourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the maintenance configuration."
+              },
+              "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('nodeMaintenanceName'))]"
             },
             "resourceGroupName": {
               "type": "string",

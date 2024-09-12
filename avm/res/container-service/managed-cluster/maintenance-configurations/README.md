@@ -13,6 +13,7 @@ This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenanc
 | Resource Type | API Version |
 | :-- | :-- |
 | `Microsoft.ContainerService/managedClusters/maintenanceConfigurations` | [2023-10-01](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerService/2023-10-01/managedClusters/maintenanceConfigurations) |
+| `Microsoft.ContainerService/managedClusters/maintenanceConfigurations` | [2024-03-02-preview](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerService/2024-03-02-preview/managedClusters/maintenanceConfigurations) |
 
 ## Parameters
 
@@ -20,7 +21,8 @@ This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenanc
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`maintenanceWindow`](#parameter-maintenancewindow) | object | Maintenance window for the maintenance configuration. |
+| [`clusterMaintenanceWindow`](#parameter-clustermaintenancewindow) | object | Maintenance window for the cluster maintenance configuration. |
+| [`nodeMaintenanceWindow`](#parameter-nodemaintenancewindow) | object | Maintenance window for the node maintenance configuration. |
 
 **Conditional parameters**
 
@@ -32,13 +34,21 @@ This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenanc
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`name`](#parameter-name) | string | Name of the maintenance configuration. |
+| [`clusterMaintenanceName`](#parameter-clustermaintenancename) | string | Name of the maintenance configuration. |
+| [`nodeMaintenanceName`](#parameter-nodemaintenancename) | string | Name of the maintenance configuration. |
 
-### Parameter: `maintenanceWindow`
+### Parameter: `clusterMaintenanceWindow`
 
-Maintenance window for the maintenance configuration.
+Maintenance window for the cluster maintenance configuration.
 
-- Required: Yes
+- Required: No
+- Type: object
+
+### Parameter: `nodeMaintenanceWindow`
+
+Maintenance window for the node maintenance configuration.
+
+- Required: No
 - Type: object
 
 ### Parameter: `managedClusterName`
@@ -48,7 +58,7 @@ The name of the parent managed cluster. Required if the template is used in a st
 - Required: Yes
 - Type: string
 
-### Parameter: `name`
+### Parameter: `clusterMaintenanceName`
 
 Name of the maintenance configuration.
 
@@ -56,10 +66,20 @@ Name of the maintenance configuration.
 - Type: string
 - Default: `'aksManagedAutoUpgradeSchedule'`
 
+### Parameter: `nodeMaintenanceName`
+
+Name of the maintenance configuration.
+
+- Required: No
+- Type: string
+- Default: `'aksManagedNodeOSUpgradeSchedule'`
+
 ## Outputs
 
 | Output | Type | Description |
 | :-- | :-- | :-- |
-| `name` | string | The name of the maintenance configuration. |
+| `clusterMaintenanceName` | string | The name of the maintenance configuration. |
+| `clusterMaintenanceResourceId` | string | The resource ID of the maintenance configuration. |
+| `nodeMaintenanceName` | string | The name of the maintenance configuration. |
+| `nodeMaintenanceResourceId` | string | The resource ID of the maintenance configuration. |
 | `resourceGroupName` | string | The resource group the agent pool was deployed into. |
-| `resourceId` | string | The resource ID of the maintenance configuration. |

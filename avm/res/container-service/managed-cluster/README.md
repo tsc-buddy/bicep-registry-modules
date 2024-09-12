@@ -20,6 +20,7 @@ This module deploys an Azure Kubernetes Service (AKS) Managed Cluster.
 | `Microsoft.ContainerService/managedClusters` | [2024-03-02-preview](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerService/2024-03-02-preview/managedClusters) |
 | `Microsoft.ContainerService/managedClusters/agentPools` | [2023-07-02-preview](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerService/2023-07-02-preview/managedClusters/agentPools) |
 | `Microsoft.ContainerService/managedClusters/maintenanceConfigurations` | [2023-10-01](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerService/2023-10-01/managedClusters/maintenanceConfigurations) |
+| `Microsoft.ContainerService/managedClusters/maintenanceConfigurations` | [2024-03-02-preview](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerService/2024-03-02-preview/managedClusters/maintenanceConfigurations) |
 | `Microsoft.Insights/diagnosticSettings` | [2021-05-01-preview](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Insights/2021-05-01-preview/diagnosticSettings) |
 | `Microsoft.KubernetesConfiguration/extensions` | [2022-03-01](https://learn.microsoft.com/en-us/azure/templates/Microsoft.KubernetesConfiguration/2022-03-01/extensions) |
 | `Microsoft.KubernetesConfiguration/fluxConfigurations` | [2022-03-01](https://learn.microsoft.com/en-us/azure/templates/Microsoft.KubernetesConfiguration/2022-03-01/fluxConfigurations) |
@@ -55,8 +56,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     // Required parameters
     name: 'csauto001'
     // Non-required parameters
-    location: '<location>'
-    maintenanceConfiguration: {
+    clusterMaintenanceConfiguration: {
       maintenanceWindow: {
         durationHours: 4
         schedule: {
@@ -73,8 +73,26 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
         utcOffset: '+00:00'
       }
     }
+    location: '<location>'
     managedIdentities: {
       systemAssigned: true
+    }
+    nodeMaintenanceConfiguration: {
+      maintenanceWindow: {
+        durationHours: 4
+        schedule: {
+          absoluteMonthly: '<absoluteMonthly>'
+          daily: '<daily>'
+          relativeMonthly: '<relativeMonthly>'
+          weekly: {
+            dayOfWeek: 'Saturday'
+            intervalWeeks: 1
+          }
+        }
+        startDate: '2024-07-03'
+        startTime: '00:00'
+        utcOffset: '+00:00'
+      }
     }
     primaryAgentPoolProfile: [
       {
@@ -105,10 +123,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
       "value": "csauto001"
     },
     // Non-required parameters
-    "location": {
-      "value": "<location>"
-    },
-    "maintenanceConfiguration": {
+    "clusterMaintenanceConfiguration": {
       "value": {
         "maintenanceWindow": {
           "durationHours": 4,
@@ -127,9 +142,31 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
         }
       }
     },
+    "location": {
+      "value": "<location>"
+    },
     "managedIdentities": {
       "value": {
         "systemAssigned": true
+      }
+    },
+    "nodeMaintenanceConfiguration": {
+      "value": {
+        "maintenanceWindow": {
+          "durationHours": 4,
+          "schedule": {
+            "absoluteMonthly": "<absoluteMonthly>",
+            "daily": "<daily>",
+            "relativeMonthly": "<relativeMonthly>",
+            "weekly": {
+              "dayOfWeek": "Saturday",
+              "intervalWeeks": 1
+            }
+          },
+          "startDate": "2024-07-03",
+          "startTime": "00:00",
+          "utcOffset": "+00:00"
+        }
       }
     },
     "primaryAgentPoolProfile": {
@@ -681,8 +718,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     // Required parameters
     name: 'csmin001'
     // Non-required parameters
-    location: '<location>'
-    maintenanceConfiguration: {
+    clusterMaintenanceConfiguration: {
       maintenanceWindow: {
         durationHours: 4
         schedule: {
@@ -699,8 +735,26 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
         utcOffset: '+00:00'
       }
     }
+    location: '<location>'
     managedIdentities: {
       systemAssigned: true
+    }
+    nodeMaintenanceConfiguration: {
+      maintenanceWindow: {
+        durationHours: 4
+        schedule: {
+          absoluteMonthly: '<absoluteMonthly>'
+          daily: '<daily>'
+          relativeMonthly: '<relativeMonthly>'
+          weekly: {
+            dayOfWeek: 'Saturday'
+            intervalWeeks: 1
+          }
+        }
+        startDate: '2024-07-03'
+        startTime: '00:00'
+        utcOffset: '+00:00'
+      }
     }
   }
 }
@@ -723,10 +777,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
       "value": "csmin001"
     },
     // Non-required parameters
-    "location": {
-      "value": "<location>"
-    },
-    "maintenanceConfiguration": {
+    "clusterMaintenanceConfiguration": {
       "value": {
         "maintenanceWindow": {
           "durationHours": 4,
@@ -745,9 +796,31 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
         }
       }
     },
+    "location": {
+      "value": "<location>"
+    },
     "managedIdentities": {
       "value": {
         "systemAssigned": true
+      }
+    },
+    "nodeMaintenanceConfiguration": {
+      "value": {
+        "maintenanceWindow": {
+          "durationHours": 4,
+          "schedule": {
+            "absoluteMonthly": "<absoluteMonthly>",
+            "daily": "<daily>",
+            "relativeMonthly": "<relativeMonthly>",
+            "weekly": {
+              "dayOfWeek": "Saturday",
+              "intervalWeeks": 1
+            }
+          },
+          "startDate": "2024-07-03",
+          "startTime": "00:00",
+          "utcOffset": "+00:00"
+        }
       }
     }
   }
@@ -1331,6 +1404,23 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
       }
     ]
     autoUpgradeProfileUpgradeChannel: 'stable'
+    clusterMaintenanceConfiguration: {
+      maintenanceWindow: {
+        durationHours: 4
+        schedule: {
+          absoluteMonthly: '<absoluteMonthly>'
+          daily: '<daily>'
+          relativeMonthly: '<relativeMonthly>'
+          weekly: {
+            dayOfWeek: 'Sunday'
+            intervalWeeks: 1
+          }
+        }
+        startDate: '2024-07-03'
+        startTime: '00:00'
+        utcOffset: '+00:00'
+      }
+    }
     diagnosticSettings: [
       {
         eventHubAuthorizationRuleResourceId: '<eventHubAuthorizationRuleResourceId>'
@@ -1372,6 +1462,23 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     monitoringWorkspaceId: '<monitoringWorkspaceId>'
     networkPlugin: 'azure'
     networkPolicy: 'azure'
+    nodeMaintenanceConfiguration: {
+      maintenanceWindow: {
+        durationHours: 4
+        schedule: {
+          absoluteMonthly: '<absoluteMonthly>'
+          daily: '<daily>'
+          relativeMonthly: '<relativeMonthly>'
+          weekly: {
+            dayOfWeek: 'Saturday'
+            intervalWeeks: 1
+          }
+        }
+        startDate: '2024-07-03'
+        startTime: '00:00'
+        utcOffset: '+00:00'
+      }
+    }
     omsAgentEnabled: true
     primaryAgentPoolProfile: [
       {
@@ -1470,6 +1577,25 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     "autoUpgradeProfileUpgradeChannel": {
       "value": "stable"
     },
+    "clusterMaintenanceConfiguration": {
+      "value": {
+        "maintenanceWindow": {
+          "durationHours": 4,
+          "schedule": {
+            "absoluteMonthly": "<absoluteMonthly>",
+            "daily": "<daily>",
+            "relativeMonthly": "<relativeMonthly>",
+            "weekly": {
+              "dayOfWeek": "Sunday",
+              "intervalWeeks": 1
+            }
+          },
+          "startDate": "2024-07-03",
+          "startTime": "00:00",
+          "utcOffset": "+00:00"
+        }
+      }
+    },
     "diagnosticSettings": {
       "value": [
         {
@@ -1530,6 +1656,25 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     },
     "networkPolicy": {
       "value": "azure"
+    },
+    "nodeMaintenanceConfiguration": {
+      "value": {
+        "maintenanceWindow": {
+          "durationHours": 4,
+          "schedule": {
+            "absoluteMonthly": "<absoluteMonthly>",
+            "daily": "<daily>",
+            "relativeMonthly": "<relativeMonthly>",
+            "weekly": {
+              "dayOfWeek": "Saturday",
+              "intervalWeeks": 1
+            }
+          },
+          "startDate": "2024-07-03",
+          "startTime": "00:00",
+          "utcOffset": "+00:00"
+        }
+      }
     },
     "omsAgentEnabled": {
       "value": true
@@ -1635,6 +1780,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
 | [`azurePolicyEnabled`](#parameter-azurepolicyenabled) | bool | Specifies whether the azurepolicy add-on is enabled or not. For security reasons, this setting should be enabled. |
 | [`azurePolicyVersion`](#parameter-azurepolicyversion) | string | Specifies the azure policy version to use. |
 | [`backendPoolType`](#parameter-backendpooltype) | string | The type of the managed inbound Load Balancer BackendPool. |
+| [`clusterMaintenanceConfiguration`](#parameter-clustermaintenanceconfiguration) | object | Whether or not to use AKS Automatic mode. |
 | [`costAnalysisEnabled`](#parameter-costanalysisenabled) | bool | Specifies whether the cost analysis add-on is enabled or not. If Enabled `enableStorageProfileDiskCSIDriver` is set to true as it is needed. |
 | [`customerManagedKey`](#parameter-customermanagedkey) | object | The customer managed key definition. |
 | [`diagnosticSettings`](#parameter-diagnosticsettings) | array | The diagnostic settings of the service. |
@@ -1676,7 +1822,6 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
 | [`loadBalancerSku`](#parameter-loadbalancersku) | string | Specifies the sku of the load balancer used by the virtual machine scale sets used by nodepools. |
 | [`location`](#parameter-location) | string | Specifies the location of AKS cluster. It picks up Resource Group's location by default. |
 | [`lock`](#parameter-lock) | object | The lock settings of the service. |
-| [`maintenanceConfiguration`](#parameter-maintenanceconfiguration) | object | Whether or not to use AKS Automatic mode. |
 | [`managedIdentities`](#parameter-managedidentities) | object | The managed identity definition for this resource. Only one type of identity is supported: system-assigned or user-assigned, but not both. |
 | [`managedOutboundIPCount`](#parameter-managedoutboundipcount) | int | Outbound IP Count for the Load balancer. |
 | [`metricAnnotationsAllowList`](#parameter-metricannotationsallowlist) | string | A comma-separated list of Kubernetes cluster metrics annotations. |
@@ -1686,6 +1831,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
 | [`networkPlugin`](#parameter-networkplugin) | string | Specifies the network plugin used for building Kubernetes network. |
 | [`networkPluginMode`](#parameter-networkpluginmode) | string | Network plugin mode used for building the Kubernetes network. Not compatible with kubenet network plugin. |
 | [`networkPolicy`](#parameter-networkpolicy) | string | Specifies the network policy used for building Kubernetes network. - calico or azure. |
+| [`nodeMaintenanceConfiguration`](#parameter-nodemaintenanceconfiguration) | object | Whether or not to use AKS Automatic mode. |
 | [`nodeResourceGroup`](#parameter-noderesourcegroup) | string | Name of the resource group containing agent pool nodes. |
 | [`omsAgentEnabled`](#parameter-omsagentenabled) | bool | Specifies whether the OMS agent is enabled. |
 | [`openServiceMeshEnabled`](#parameter-openservicemeshenabled) | bool | Specifies whether the openServiceMesh add-on is enabled or not. |
@@ -2386,6 +2532,26 @@ The type of the managed inbound Load Balancer BackendPool.
   ]
   ```
 
+### Parameter: `clusterMaintenanceConfiguration`
+
+Whether or not to use AKS Automatic mode.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`maintenanceWindow`](#parameter-clustermaintenanceconfigurationmaintenancewindow) | object | Maintenance window for the cluster maintenance configuration. |
+
+### Parameter: `clusterMaintenanceConfiguration.maintenanceWindow`
+
+Maintenance window for the cluster maintenance configuration.
+
+- Required: Yes
+- Type: object
+
 ### Parameter: `costAnalysisEnabled`
 
 Specifies whether the cost analysis add-on is enabled or not. If Enabled `enableStorageProfileDiskCSIDriver` is set to true as it is needed.
@@ -3015,26 +3181,6 @@ Specify the name of lock.
 - Required: No
 - Type: string
 
-### Parameter: `maintenanceConfiguration`
-
-Whether or not to use AKS Automatic mode.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`maintenanceWindow`](#parameter-maintenanceconfigurationmaintenancewindow) | object | Maintenance window for the maintenance configuration. |
-
-### Parameter: `maintenanceConfiguration.maintenanceWindow`
-
-Maintenance window for the maintenance configuration.
-
-- Required: Yes
-- Type: object
-
 ### Parameter: `managedIdentities`
 
 The managed identity definition for this resource. Only one type of identity is supported: system-assigned or user-assigned, but not both.
@@ -3148,6 +3294,26 @@ Specifies the network policy used for building Kubernetes network. - calico or a
     'calico'
   ]
   ```
+
+### Parameter: `nodeMaintenanceConfiguration`
+
+Whether or not to use AKS Automatic mode.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`maintenanceWindow`](#parameter-nodemaintenanceconfigurationmaintenancewindow) | object | Maintenance window for the node maintenance configuration. |
+
+### Parameter: `nodeMaintenanceConfiguration.maintenanceWindow`
+
+Maintenance window for the node maintenance configuration.
+
+- Required: Yes
+- Type: object
 
 ### Parameter: `nodeResourceGroup`
 

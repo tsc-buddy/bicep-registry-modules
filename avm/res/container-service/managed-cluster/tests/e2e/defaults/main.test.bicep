@@ -65,7 +65,7 @@ module testDeployment '../../../main.bicep' = [
             daily: null
             weekly: {
               intervalWeeks: 1
-              dayOfWeek: 'Sunday'
+              dayOfWeek: 'Saturday'
             }
             absoluteMonthly: null
             relativeMonthly: null
