@@ -169,7 +169,10 @@ param primaryAgentPoolProfile array = [
 param agentPools agentPoolType
 
 @description('Optional. Whether or not to use AKS Automatic mode.')
-param maintenanceConfiguration maintenanceConfigurationType
+param clusterMaintenanceConfiguration clusterMaintenanceConfigurationType
+
+@description('Optional. Whether or not to use AKS Automatic mode.')
+param nodeMaintenanceConfiguration nodeMaintenanceConfigurationType
 
 @description('Optional. Specifies whether the cost analysis add-on is enabled or not. If Enabled `enableStorageProfileDiskCSIDriver` is set to true as it is needed.')
 param costAnalysisEnabled bool = false
@@ -769,10 +772,18 @@ resource managedCluster 'Microsoft.ContainerService/managedClusters@2024-03-02-p
   }
 }
 
-module managedCluster_maintenanceConfigurations 'maintenance-configurations/main.bicep' = if (!empty(maintenanceConfiguration)) {
+module managedCluster_clustermaintenanceConfigurations 'maintenance-configurations/main.bicep' = if (!empty(clusterMaintenanceConfiguration)) {
   name: '${uniqueString(deployment().name, location)}-ManagedCluster-MaintenanceConfigurations'
   params: {
-    maintenanceWindow: maintenanceConfiguration!.maintenanceWindow
+    clusterMaintenanceWindow: clusterMaintenanceConfiguration!.maintenanceWindow
+    managedClusterName: managedCluster.name
+  }
+}
+
+module managedCluster_nodeMaintenanceConfigurations 'maintenance-configurations/main.bicep' = if (!empty(nodeMaintenanceConfiguration)) {
+  name: '${uniqueString(deployment().name, location)}-ManagedCluster-MaintenanceConfigurations'
+  params: {
+    nodeMaintenanceWindow: nodeMaintenanceConfiguration!.maintenanceWindow
     managedClusterName: managedCluster.name
   }
 }
@@ -1217,7 +1228,12 @@ type customerManagedKeyType = {
   keyVaultNetworkAccess: ('Private' | 'Public')
 }?
 
-type maintenanceConfigurationType = {
-  @description('Required. Maintenance window for the maintenance configuration.')
+type clusterMaintenanceConfigurationType = {
+  @description('Required. Maintenance window for the cluster maintenance configuration.')
+  maintenanceWindow: object
+}?
+
+type nodeMaintenanceConfigurationType = {
+  @description('Required. Maintenance window for the node maintenance configuration.')
   maintenanceWindow: object
 }?
