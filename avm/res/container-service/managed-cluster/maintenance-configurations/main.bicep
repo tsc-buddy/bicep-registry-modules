@@ -43,10 +43,10 @@ output clusterMaintenanceName string = aksManagedAutoUpgradeSchedule.name
 @description('The name of the maintenance configuration.')
 output nodeMaintenanceName string = aksManagedNodeOSUpgradeSchedule.name
 
-@description('The resource ID of the maintenance configuration.')
-output clusterMaintenanceResourceId string = aksManagedAutoUpgradeSchedule.id
+@description('The resource ID of the cluster maintenance configuration.')
+output resourceId string = aksManagedAutoUpgradeSchedule.id
 
-@description('The resource ID of the maintenance configuration.')
+@description('The resource ID of the node maintenance configuration.')
 output nodeMaintenanceResourceId string = aksManagedNodeOSUpgradeSchedule.id
 
 @description('The resource group the agent pool was deployed into.')
