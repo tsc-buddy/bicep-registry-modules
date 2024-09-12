@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "6707709888421096485"
+      "templateHash": "8340981256287679064"
     },
     "name": "Azure Kubernetes Service (AKS) Managed Clusters",
     "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster.",
@@ -975,6 +975,19 @@
     },
     "primaryAgentPoolProfile": {
       "type": "array",
+      "defaultValue": [
+        {
+          "name": "systempool",
+          "vmSize": "Standard_DS2_v2",
+          "mode": "System",
+          "availabilityZones": [
+            "1",
+            "2",
+            "3"
+          ],
+          "count": 3
+        }
+      ],
       "metadata": {
         "description": "Required. Properties of the primary agent pool."
       }
@@ -1929,10 +1942,10 @@
             "value": "[coalesce(parameters('agentPools'), createArray())[copyIndex()].name]"
           },
           "availabilityZones": {
-            "value": "[tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'availabilityZones')]"
+            "value": "[coalesce(tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'availabilityZones'), createArray('1', '2', '3'))]"
           },
           "count": {
-            "value": "[tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'count')]"
+            "value": "[coalesce(tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'count'), createArray(3))]"
           },
           "sourceResourceId": {
             "value": "[tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'sourceResourceId')]"
