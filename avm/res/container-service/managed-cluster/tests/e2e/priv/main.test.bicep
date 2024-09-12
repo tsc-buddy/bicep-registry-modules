@@ -58,9 +58,11 @@ module testDeployment '../../../main.bicep' = [
       primaryAgentPoolProfile: [
         {
           availabilityZones: [
+            '1'
+            '2'
             '3'
           ]
-          count: 1
+          count: 3
           enableAutoScaling: true
           maxCount: 3
           maxPods: 30
@@ -80,9 +82,11 @@ module testDeployment '../../../main.bicep' = [
       agentPools: [
         {
           availabilityZones: [
+            '1'
+            '2'
             '3'
           ]
-          count: 2
+          count: 3
           enableAutoScaling: true
           maxCount: 3
           maxPods: 30
@@ -101,9 +105,11 @@ module testDeployment '../../../main.bicep' = [
         }
         {
           availabilityZones: [
+            '1'
+            '2'
             '3'
           ]
-          count: 2
+          count: 3
           enableAutoScaling: true
           maxCount: 3
           maxPods: 30

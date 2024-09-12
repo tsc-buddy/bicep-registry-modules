@@ -20,7 +20,7 @@ param resourceLocation string = deployment().location
 param serviceShort string = 'cswaf'
 
 @description('Optional. A token to inject into the name of each resource. This value can be automatically injected by the CI.')
-param namePrefix string = '#_namePrefix_#'
+param namePrefix string = 'wfnl'
 
 // ============ //
 // Dependencies //
@@ -74,6 +74,8 @@ module testDeployment '../../../main.bicep' = [
       primaryAgentPoolProfile: [
         {
           availabilityZones: [
+            '1'
+            '2'
             '3'
           ]
           count: 3
@@ -95,12 +97,9 @@ module testDeployment '../../../main.bicep' = [
       ]
       agentPools: [
         {
-          availabilityZones: [
-            '3'
-          ]
-          count: 3
+          count: 6
           enableAutoScaling: true
-          maxCount: 3
+          maxCount: 6
           maxPods: 50
           minCount: 3
           minPods: 2
@@ -117,9 +116,6 @@ module testDeployment '../../../main.bicep' = [
           vnetSubnetID: '${nestedDependencies.outputs.vNetResourceId}/subnets/defaultSubnet'
         }
         {
-          availabilityZones: [
-            '3'
-          ]
           count: 3
           enableAutoScaling: true
           maxCount: 3

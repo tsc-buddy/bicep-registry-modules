@@ -153,8 +153,13 @@ param privateDNSZone string?
 @description('Required. Properties of the primary agent pool.')
 param primaryAgentPoolProfile array = [
   {
+    name: 'systempool'
+    vmSize: 'Standard_DS2_v2'
+    mode: 'System'
     availabilityZones: [
-      3
+      '1'
+      '2'
+      '3'
     ]
     count: 3
   }
@@ -778,7 +783,11 @@ module managedCluster_agentPools 'agent-pool/main.bicep' = [
     params: {
       managedClusterName: managedCluster.?name
       name: agentPool.name
-      availabilityZones: agentPool.?availabilityZones ?? [3]
+      availabilityZones: agentPool.?availabilityZones ?? [
+        '1'
+        '2'
+        '3'
+      ]
       count: agentPool.?count ?? [3]
       sourceResourceId: agentPool.?sourceResourceId
       enableAutoScaling: agentPool.?enableAutoScaling

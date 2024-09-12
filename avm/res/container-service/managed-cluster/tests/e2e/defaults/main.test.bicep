@@ -18,7 +18,7 @@ param resourceLocation string = deployment().location
 param serviceShort string = 'csmin'
 
 @description('Optional. A token to inject into the name of each resource.')
-param namePrefix string = 'f'
+param namePrefix string = '#_namePrefix_#'
 
 // ============ //
 // Dependencies //
@@ -42,14 +42,6 @@ module testDeployment '../../../main.bicep' = [
       managedIdentities: {
         systemAssigned: true
       }
-      primaryAgentPoolProfile: [
-        {
-          name: 'systempool'
-          count: 3
-          vmSize: 'Standard_DS2_v2'
-          mode: 'System'
-        }
-      ]
     }
   }
 ]
