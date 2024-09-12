@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "8340981256287679064"
+      "templateHash": "14221775645445895015"
     },
     "name": "Azure Kubernetes Service (AKS) Managed Clusters",
     "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster.",
@@ -989,7 +989,7 @@
         }
       ],
       "metadata": {
-        "description": "Required. Properties of the primary agent pool."
+        "description": "Required. Properties of the primary agent pool. Defaults to leveraging availability zones and a node count of 3."
       }
     },
     "agentPools": {

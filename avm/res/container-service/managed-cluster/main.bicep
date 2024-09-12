@@ -150,7 +150,7 @@ param enablePrivateClusterPublicFQDN bool = false
 @description('Optional. Private DNS Zone configuration. Set to \'system\' and AKS will create a private DNS zone in the node resource group. Set to \'\' to disable private DNS Zone creation and use public DNS. Supply the resource ID here of an existing Private DNS zone to use an existing zone.')
 param privateDNSZone string?
 
-@description('Required. Properties of the primary agent pool.')
+@description('Required. Properties of the primary agent pool. Defaults to leveraging availability zones and a node count of 3.')
 param primaryAgentPoolProfile array = [
   {
     name: 'systempool'

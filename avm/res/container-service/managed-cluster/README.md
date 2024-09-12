@@ -1554,7 +1554,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`name`](#parameter-name) | string | Specifies the name of the AKS cluster. |
-| [`primaryAgentPoolProfile`](#parameter-primaryagentpoolprofile) | array | Properties of the primary agent pool. |
+| [`primaryAgentPoolProfile`](#parameter-primaryagentpoolprofile) | array | Properties of the primary agent pool. Defaults to leveraging availability zones and a node count of 3. |
 
 **Conditional parameters**
 
@@ -1680,7 +1680,7 @@ Specifies the name of the AKS cluster.
 
 ### Parameter: `primaryAgentPoolProfile`
 
-Properties of the primary agent pool.
+Properties of the primary agent pool. Defaults to leveraging availability zones and a node count of 3.
 
 - Required: No
 - Type: array
