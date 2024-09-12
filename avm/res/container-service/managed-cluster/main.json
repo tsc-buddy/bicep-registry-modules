@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "12305025161226006756"
+      "templateHash": "13132045940571683519"
     },
     "name": "Azure Kubernetes Service (AKS) Managed Clusters",
     "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster.",
@@ -1874,7 +1874,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "10977023139923657698"
+              "templateHash": "4506451021464557723"
             },
             "name": "Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations",
             "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations.",
@@ -1947,7 +1947,7 @@
             }
           },
           "outputs": {
-            "clusterMaintenanceName": {
+            "name": {
               "type": "string",
               "metadata": {
                 "description": "The name of the maintenance configuration."
@@ -2015,7 +2015,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "10977023139923657698"
+              "templateHash": "4506451021464557723"
             },
             "name": "Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations",
             "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations.",
@@ -2088,7 +2088,7 @@
             }
           },
           "outputs": {
-            "clusterMaintenanceName": {
+            "name": {
               "type": "string",
               "metadata": {
                 "description": "The name of the maintenance configuration."

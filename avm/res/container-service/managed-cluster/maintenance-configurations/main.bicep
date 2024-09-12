@@ -38,7 +38,7 @@ resource aksManagedNodeOSUpgradeSchedule 'Microsoft.ContainerService/managedClus
 }
 
 @description('The name of the maintenance configuration.')
-output clusterMaintenanceName string = aksManagedAutoUpgradeSchedule.name
+output name string = aksManagedAutoUpgradeSchedule.name
 
 @description('The name of the maintenance configuration.')
 output nodeMaintenanceName string = aksManagedNodeOSUpgradeSchedule.name
