@@ -39,13 +39,30 @@ module testDeployment '../../../main.bicep' = [
     params: {
       name: '${namePrefix}${serviceShort}001'
       location: resourceLocation
-      maintenanceConfiguration: {
+      clusterMaintenanceConfiguration: {
         maintenanceWindow: {
           schedule: {
             daily: null
             weekly: {
               intervalWeeks: 1
               dayOfWeek: 'Sunday'
+            }
+            absoluteMonthly: null
+            relativeMonthly: null
+          }
+          durationHours: 4
+          utcOffset: '+00:00'
+          startDate: '2024-07-03'
+          startTime: '00:00'
+        }
+      }
+      nodeMaintenanceConfiguration: {
+        maintenanceWindow: {
+          schedule: {
+            daily: null
+            weekly: {
+              intervalWeeks: 1
+              dayOfWeek: 'Saturday'
             }
             absoluteMonthly: null
             relativeMonthly: null

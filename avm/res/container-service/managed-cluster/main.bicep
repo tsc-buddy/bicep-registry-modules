@@ -150,14 +150,29 @@ param enablePrivateClusterPublicFQDN bool = false
 @description('Optional. Private DNS Zone configuration. Set to \'system\' and AKS will create a private DNS zone in the node resource group. Set to \'\' to disable private DNS Zone creation and use public DNS. Supply the resource ID here of an existing Private DNS zone to use an existing zone.')
 param privateDNSZone string?
 
-@description('Required. Properties of the primary agent pool.')
-param primaryAgentPoolProfile array
+@description('Required. Properties of the primary agent pool. Defaults to leveraging availability zones and a node count of 3.')
+param primaryAgentPoolProfile array = [
+  {
+    name: 'systempool'
+    vmSize: 'Standard_DS2_v2'
+    mode: 'System'
+    availabilityZones: [
+      '1'
+      '2'
+      '3'
+    ]
+    count: 3
+  }
+]
 
 @description('Optional. Define one or more secondary/additional agent pools.')
 param agentPools agentPoolType
 
 @description('Optional. Whether or not to use AKS Automatic mode.')
-param maintenanceConfiguration maintenanceConfigurationType
+param clusterMaintenanceConfiguration clusterMaintenanceConfigurationType
+
+@description('Optional. Whether or not to use AKS Automatic mode.')
+param nodeMaintenanceConfiguration nodeMaintenanceConfigurationType
 
 @description('Optional. Specifies whether the cost analysis add-on is enabled or not. If Enabled `enableStorageProfileDiskCSIDriver` is set to true as it is needed.')
 param costAnalysisEnabled bool = false
@@ -757,10 +772,11 @@ resource managedCluster 'Microsoft.ContainerService/managedClusters@2024-03-02-p
   }
 }
 
-module managedCluster_maintenanceConfigurations 'maintenance-configurations/main.bicep' = if (!empty(maintenanceConfiguration)) {
+module managedCluster_maintenanceConfigurations 'maintenance-configurations/main.bicep' = if (!empty(clusterMaintenanceConfiguration) || !empty(nodeMaintenanceConfiguration)) {
   name: '${uniqueString(deployment().name, location)}-ManagedCluster-MaintenanceConfigurations'
   params: {
-    maintenanceWindow: maintenanceConfiguration!.maintenanceWindow
+    clusterMaintenanceWindow: clusterMaintenanceConfiguration!.maintenanceWindow
+    nodeMaintenanceWindow: nodeMaintenanceConfiguration!.maintenanceWindow
     managedClusterName: managedCluster.name
   }
 }
@@ -771,8 +787,12 @@ module managedCluster_agentPools 'agent-pool/main.bicep' = [
     params: {
       managedClusterName: managedCluster.?name
       name: agentPool.name
-      availabilityZones: agentPool.?availabilityZones
-      count: agentPool.?count
+      availabilityZones: agentPool.?availabilityZones ?? [
+        '1'
+        '2'
+        '3'
+      ]
+      count: agentPool.?count ?? [3]
       sourceResourceId: agentPool.?sourceResourceId
       enableAutoScaling: agentPool.?enableAutoScaling
       enableEncryptionAtHost: agentPool.?enableEncryptionAtHost
@@ -1201,7 +1221,12 @@ type customerManagedKeyType = {
   keyVaultNetworkAccess: ('Private' | 'Public')
 }?
 
-type maintenanceConfigurationType = {
-  @description('Required. Maintenance window for the maintenance configuration.')
+type clusterMaintenanceConfigurationType = {
+  @description('Required. Maintenance window for the cluster maintenance configuration.')
+  maintenanceWindow: object
+}?
+
+type nodeMaintenanceConfigurationType = {
+  @description('Required. Maintenance window for the node maintenance configuration.')
   maintenanceWindow: object
 }?

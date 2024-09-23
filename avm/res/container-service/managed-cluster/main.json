@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "6707709888421096485"
+      "templateHash": "5092019283170335421"
     },
     "name": "Azure Kubernetes Service (AKS) Managed Clusters",
     "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster.",
@@ -670,13 +670,25 @@
       },
       "nullable": true
     },
-    "maintenanceConfigurationType": {
+    "clusterMaintenanceConfigurationType": {
       "type": "object",
       "properties": {
         "maintenanceWindow": {
           "type": "object",
           "metadata": {
-            "description": "Required. Maintenance window for the maintenance configuration."
+            "description": "Required. Maintenance window for the cluster maintenance configuration."
+          }
+        }
+      },
+      "nullable": true
+    },
+    "nodeMaintenanceConfigurationType": {
+      "type": "object",
+      "properties": {
+        "maintenanceWindow": {
+          "type": "object",
+          "metadata": {
+            "description": "Required. Maintenance window for the node maintenance configuration."
           }
         }
       },
@@ -975,8 +987,21 @@
     },
     "primaryAgentPoolProfile": {
       "type": "array",
+      "defaultValue": [
+        {
+          "name": "systempool",
+          "vmSize": "Standard_DS2_v2",
+          "mode": "System",
+          "availabilityZones": [
+            "1",
+            "2",
+            "3"
+          ],
+          "count": 3
+        }
+      ],
       "metadata": {
-        "description": "Required. Properties of the primary agent pool."
+        "description": "Required. Properties of the primary agent pool. Defaults to leveraging availability zones and a node count of 3."
       }
     },
     "agentPools": {
@@ -985,8 +1010,14 @@
         "description": "Optional. Define one or more secondary/additional agent pools."
       }
     },
-    "maintenanceConfiguration": {
-      "$ref": "#/definitions/maintenanceConfigurationType",
+    "clusterMaintenanceConfiguration": {
+      "$ref": "#/definitions/clusterMaintenanceConfigurationType",
+      "metadata": {
+        "description": "Optional. Whether or not to use AKS Automatic mode."
+      }
+    },
+    "nodeMaintenanceConfiguration": {
+      "$ref": "#/definitions/nodeMaintenanceConfigurationType",
       "metadata": {
         "description": "Optional. Whether or not to use AKS Automatic mode."
       }
@@ -1818,7 +1849,7 @@
       ]
     },
     "managedCluster_maintenanceConfigurations": {
-      "condition": "[not(empty(parameters('maintenanceConfiguration')))]",
+      "condition": "[or(not(empty(parameters('clusterMaintenanceConfiguration'))), not(empty(parameters('nodeMaintenanceConfiguration'))))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "[format('{0}-ManagedCluster-MaintenanceConfigurations', uniqueString(deployment().name, parameters('location')))]",
@@ -1828,8 +1859,11 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "maintenanceWindow": {
-            "value": "[parameters('maintenanceConfiguration').maintenanceWindow]"
+          "clusterMaintenanceWindow": {
+            "value": "[parameters('clusterMaintenanceConfiguration').maintenanceWindow]"
+          },
+          "nodeMaintenanceWindow": {
+            "value": "[parameters('nodeMaintenanceConfiguration').maintenanceWindow]"
           },
           "managedClusterName": {
             "value": "[parameters('name')]"
@@ -1837,22 +1871,31 @@
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "languageVersion": "2.0",
           "contentVersion": "1.0.0.0",
           "metadata": {
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "12168542117744033419"
+              "templateHash": "4506451021464557723"
             },
             "name": "Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations",
             "description": "This module deploys an Azure Kubernetes Service (AKS) Managed Cluster Maintenance Configurations.",
             "owner": "Azure/module-maintainers"
           },
           "parameters": {
-            "maintenanceWindow": {
+            "clusterMaintenanceWindow": {
               "type": "object",
+              "nullable": true,
               "metadata": {
-                "description": "Required. Maintenance window for the maintenance configuration."
+                "description": "Required. Maintenance window for the cluster maintenance configuration."
+              }
+            },
+            "nodeMaintenanceWindow": {
+              "type": "object",
+              "nullable": true,
+              "metadata": {
+                "description": "Required. Maintenance window for the node maintenance configuration."
               }
             },
             "managedClusterName": {
@@ -1861,38 +1904,79 @@
                 "description": "Conditional. The name of the parent managed cluster. Required if the template is used in a standalone deployment."
               }
             },
-            "name": {
+            "clusterMaintenanceName": {
               "type": "string",
               "defaultValue": "aksManagedAutoUpgradeSchedule",
               "metadata": {
                 "description": "Optional. Name of the maintenance configuration."
               }
-            }
-          },
-          "resources": [
-            {
-              "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
-              "apiVersion": "2023-10-01",
-              "name": "[format('{0}/{1}', parameters('managedClusterName'), parameters('name'))]",
-              "properties": {
-                "maintenanceWindow": "[parameters('maintenanceWindow')]"
+            },
+            "nodeMaintenanceName": {
+              "type": "string",
+              "defaultValue": "aksManagedNodeOSUpgradeSchedule",
+              "metadata": {
+                "description": "Optional. Name of the maintenance configuration."
               }
             }
-          ],
+          },
+          "resources": {
+            "managedCluster": {
+              "existing": true,
+              "type": "Microsoft.ContainerService/managedClusters",
+              "apiVersion": "2024-03-02-preview",
+              "name": "[parameters('managedClusterName')]"
+            },
+            "aksManagedAutoUpgradeSchedule": {
+              "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+              "apiVersion": "2023-10-01",
+              "name": "[format('{0}/{1}', parameters('managedClusterName'), parameters('clusterMaintenanceName'))]",
+              "properties": {
+                "maintenanceWindow": "[parameters('clusterMaintenanceWindow')]"
+              },
+              "dependsOn": [
+                "managedCluster"
+              ]
+            },
+            "aksManagedNodeOSUpgradeSchedule": {
+              "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+              "apiVersion": "2024-03-02-preview",
+              "name": "[format('{0}/{1}', parameters('managedClusterName'), parameters('nodeMaintenanceName'))]",
+              "properties": {
+                "maintenanceWindow": "[parameters('nodeMaintenanceWindow')]"
+              },
+              "dependsOn": [
+                "managedCluster"
+              ]
+            }
+          },
           "outputs": {
             "name": {
               "type": "string",
               "metadata": {
                 "description": "The name of the maintenance configuration."
               },
-              "value": "[parameters('name')]"
+              "value": "[parameters('clusterMaintenanceName')]"
+            },
+            "nodeMaintenanceName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the maintenance configuration."
+              },
+              "value": "[parameters('nodeMaintenanceName')]"
             },
             "resourceId": {
               "type": "string",
               "metadata": {
-                "description": "The resource ID of the maintenance configuration."
+                "description": "The resource ID of the cluster maintenance configuration."
               },
-              "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('name'))]"
+              "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('clusterMaintenanceName'))]"
+            },
+            "nodeMaintenanceResourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the node maintenance configuration."
+              },
+              "value": "[resourceId('Microsoft.ContainerService/managedClusters/maintenanceConfigurations', parameters('managedClusterName'), parameters('nodeMaintenanceName'))]"
             },
             "resourceGroupName": {
               "type": "string",
@@ -1929,10 +2013,10 @@
             "value": "[coalesce(parameters('agentPools'), createArray())[copyIndex()].name]"
           },
           "availabilityZones": {
-            "value": "[tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'availabilityZones')]"
+            "value": "[coalesce(tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'availabilityZones'), createArray('1', '2', '3'))]"
           },
           "count": {
-            "value": "[tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'count')]"
+            "value": "[coalesce(tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'count'), createArray(3))]"
           },
           "sourceResourceId": {
             "value": "[tryGet(coalesce(parameters('agentPools'), createArray())[copyIndex()], 'sourceResourceId')]"

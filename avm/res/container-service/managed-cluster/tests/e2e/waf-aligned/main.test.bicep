@@ -71,9 +71,45 @@ module testDeployment '../../../main.bicep' = [
       name: '${namePrefix}${serviceShort}001'
       location: resourceLocation
       enablePrivateCluster: true
+      clusterMaintenanceConfiguration: {
+        maintenanceWindow: {
+          schedule: {
+            daily: null
+            weekly: {
+              intervalWeeks: 1
+              dayOfWeek: 'Sunday'
+            }
+            absoluteMonthly: null
+            relativeMonthly: null
+          }
+          durationHours: 4
+          utcOffset: '+00:00'
+          startDate: '2024-07-03'
+          startTime: '00:00'
+        }
+      }
+      nodeMaintenanceConfiguration: {
+        maintenanceWindow: {
+          schedule: {
+            daily: null
+            weekly: {
+              intervalWeeks: 1
+              dayOfWeek: 'Saturday'
+            }
+            absoluteMonthly: null
+            relativeMonthly: null
+          }
+          durationHours: 4
+          utcOffset: '+00:00'
+          startDate: '2024-07-03'
+          startTime: '00:00'
+        }
+      }
       primaryAgentPoolProfile: [
         {
           availabilityZones: [
+            '1'
+            '2'
             '3'
           ]
           count: 3
@@ -95,9 +131,6 @@ module testDeployment '../../../main.bicep' = [
       ]
       agentPools: [
         {
-          availabilityZones: [
-            '3'
-          ]
           count: 3
           enableAutoScaling: true
           maxCount: 3
@@ -117,9 +150,6 @@ module testDeployment '../../../main.bicep' = [
           vnetSubnetID: '${nestedDependencies.outputs.vNetResourceId}/subnets/defaultSubnet'
         }
         {
-          availabilityZones: [
-            '3'
-          ]
           count: 3
           enableAutoScaling: true
           maxCount: 3
