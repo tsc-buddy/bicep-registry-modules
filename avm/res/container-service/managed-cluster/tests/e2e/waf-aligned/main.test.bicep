@@ -131,9 +131,9 @@ module testDeployment '../../../main.bicep' = [
       ]
       agentPools: [
         {
-          count: 6
+          count: 3
           enableAutoScaling: true
-          maxCount: 6
+          maxCount: 3
           maxPods: 50
           minCount: 3
           minPods: 2

@@ -1366,9 +1366,9 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     // Non-required parameters
     agentPools: [
       {
-        count: 6
+        count: 3
         enableAutoScaling: true
-        maxCount: 6
+        maxCount: 3
         maxPods: 50
         minCount: 3
         minPods: 2
@@ -1536,9 +1536,9 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:<vers
     "agentPools": {
       "value": [
         {
-          "count": 6,
+          "count": 3,
           "enableAutoScaling": true,
-          "maxCount": 6,
+          "maxCount": 3,
           "maxPods": 50,
           "minCount": 3,
           "minPods": 2,
